@@ -2,9 +2,10 @@
   "name": "blog",
   "version": "1.0.0",
   "description": "MEAN stack blog",
-  "main": "server.js",
+  "main": "bin/www.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon  bin/www.js"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,14 @@
   },
   "homepage": "https://github.com/ksuhiyp/blog#readme",
   "dependencies": {
+    "compression": "^1.7.3",
     "cors": "^2.8.4",
+    "encodeurl": "^1.0.2",
     "express": "^4.16.3",
     "http-errors": "^1.7.0",
-    "mongoose": "^5.2.7"
+    "mongoose": "^5.2.7",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
     "morgan": "^1.9.0"
