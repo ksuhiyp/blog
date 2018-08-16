@@ -7,13 +7,13 @@ const passport = require('passport');
 const db = require('./config/db');
 const morgan = require('morgan');
 const articleRouter = require('./routes/article');
+const errorHandler = require('./controllers/errorHandler');
+
 const app = express();
 app.use(compression())
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use('/articles', require('./routes/article'));
-app.use((err, req, res, next) => {
-    console.log(err.stack)
-    res.status(err.status || 406).json({ "Error": err.message });
-});
+app.use('/users', require('./routes/user'));
+app.use(errorHandler.errorHandler);
 module.exports = app;

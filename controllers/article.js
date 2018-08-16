@@ -1,6 +1,7 @@
 const articleModel = require('../models/article');
 const createError = require('http-errors');
 const ObjectId = require('mongoose').Types.ObjectId;
+const errorHandler = require('../controllers/errorHandler');
 
 /**
  * Can be used to list all aticles or specific list of articles depending on @param {query} 
@@ -25,7 +26,7 @@ exports.getAllArticles = ((req, res, next) => {
 
 exports.getOneArticle = (req, res, next) => {
     const id = req.params._id;
-    if (!validateObjId(id))
+    if (!errorHandler.validateObjId(id))
         next(createError(400, `Invalid id parameter ${id}`))
 
     articleModel.getOneArticle(id, (err, article) => {
@@ -59,7 +60,7 @@ exports.deleteArticles = (req, res, next) => {
     if (!req.query.id)
         return next(createError(400, 'No parameters provided'));
     if (!Array.isArray(req.query.id)) {
-        if (!validateObjId(req.query.id))
+        if (!errorHandler.validateObjId(req.query.id))
             return next(createError(400, "Incorrect Id"));
         articleModel.deleteArticle(req.query.id, (err, article) => {
             if (err) {
@@ -67,13 +68,13 @@ exports.deleteArticles = (req, res, next) => {
             }
             if (!article)
                 return next(createError(400, 'article not found to be deleted!'));
-                
+
             res.status(200).json({ "operation": "deleteArticle", "deletedArticle": article._id });
 
         })
     }
     else {
-        if (!validateObjIds(req.query.id))
+        if (!errorHandler.validateObjIds(req.query.id))
             return next(createError(400, 'One or more ids are Invalid'));
         let ids = req.query.id
         let query = { '_id': { '$in': ids } }
@@ -89,7 +90,7 @@ exports.deleteArticles = (req, res, next) => {
 exports.deleteArticle = (req, res, next) => {
     if (!req.params._id)
         next(createError(400, 'Missing Parameters'))
-    if (!validateObjId(req.params._id))
+    if (!errorHandler.validateObjId(req.params._id))
         return next(createError(400, "Incorrect Id"));
     let id = req.params._id
     articleModel.deleteArticle(id, (err, article) => {
@@ -104,7 +105,6 @@ exports.deleteArticle = (req, res, next) => {
 }
 exports.updateArticle = (req, res, next) => {
     req.body.last_update = Date.now();
-    const article = new articleModel.articleModel(req.body);
 
     articleModel.getOneArticle(req.params._id, function (err, doc) {
         if (err)
@@ -127,18 +127,5 @@ exports.updateArticle = (req, res, next) => {
     });
 }
 
-const validateObjIds = (data) => {
-    console.log(typeof (data));
-
-
-    for (id of data) {
-        if (!ObjectId.isValid(id))
-            return false
-    }
-    return true
-}
-const validateObjId = (id) => {
-    return ObjectId.isValid(id)
-}
 
 
