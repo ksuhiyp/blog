@@ -3,13 +3,19 @@ const createError = require('http-errors');
 const errorHandler = require('../controllers/errorHandler');
 //filter and customise sinsitive returned data 
 exports.createUser = (req, res, next) => {
-    //handle validation errors 
     body = req.body;
-    userModel.createUser(body, (err, user) => {
+    user = new userModel.userModel({})
+
+    for (prob in body) {
+
+        user[prob] = req.body[prob]
+    }
+
+    userModel.createUser(user, (err, user) => {
         if (err)
-            next(err);
+            return next(err);
         if (!user)
-            next(createError(400, 'somthing wrong'));
+            return next(createError(400, 'somthing wrong'));
 
         res.status(200).json({
             "message": "success",
