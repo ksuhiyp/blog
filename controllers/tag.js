@@ -17,15 +17,18 @@ exports.getTagById = (req, res, next) => {
 }
 
 exports.getManyTags = (req, res, next) => {
-    if (!errorHandler.validateObjId(req.params._id))
+    if (!errorHandler.validateObjIds(req.query._id))
         return next(createError(400, 'Invalid id! parameter should be type of id[]'));
 
-    tagModel.getTagById(req.params._id, (err, tag) => {
+    tagModel.getManyTags({ "_id": { "$in": req.query._id } }, null, null, (err, tag) => {
         if (err)
             return next(err);
         if (!tag)
-            return next(createError(400, 'somthing is not ok'))
-    })
+            return next(createError(400, 'somthing is not ok'));
+        res.status(201).json({ "Operation": 'get Many tag', "result": tag })
+
+
+    });
 }
 exports.getAllTags = (req, res, next) => {
     tagModel.getAllTags(null, (err, tags) => {

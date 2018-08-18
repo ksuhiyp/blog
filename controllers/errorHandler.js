@@ -7,8 +7,9 @@ exports.errorHandler = (err, req, res, next) => {
 };
 
 exports.validateObjIds = (data) => {
+    console.log(data);
+    
     for (id of data) {
-console.log(id);
 
         if (!ObjectId.isValid(id))
             return false;

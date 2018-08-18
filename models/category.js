@@ -3,22 +3,26 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     }
 });
 
 exports.categoryModel = categoryModel = mongoose.model('category', schema);
+exports.getAllCategorys = (conditon, callback) => {
+    categoryModel.find(conditon, callback)
+}
 
-
-exports.getCategories = (condition, options, projection, callback, limit) => {
+exports.getManyCategories = (condition, options, projection, callback, limit) => {
     categoryModel.find(condition, options, projection, callback).limit(limit)
 }
-exports.getOneCategory = (id, callback) => {
+exports.getCategoryById = (id, callback) => {
 
     categoryModel.findById(id, callback)
 }
-exports.createCategory = (category, callback) => {
+exports.createtCategory = (category, callback) => {
     categoryModel.create(category, callback)
+
 }
 exports.deleteCategory = (id, callback) => {
     categoryModel.findByIdAndRemove(id, callback);

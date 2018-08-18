@@ -16,6 +16,7 @@ app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use('/articles', require('./routes/article'));
 app.use('/tags', require('./routes/tag'));
+app.use('/categories', require('./routes/category'));
 app.use('/users', require('./routes/user'));
 app.use(errorHandler.errorHandler);
 module.exports = app;
