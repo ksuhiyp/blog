@@ -53,6 +53,10 @@ const schema = mongoose.Schema({
         type: Date,
         default: null
 
+    },
+    articles: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'article'
     }
 
 });

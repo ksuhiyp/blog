@@ -10,4 +10,5 @@ router.get('/:_id', tagController.getTagById);
 router.delete('/deleteManyTags', tagController.deleteManyTags);
 router.delete('/:_id', tagController.deleteTag);
 router.put('/:_id', tagController.updateTag);
+
 module.exports = router;

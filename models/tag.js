@@ -5,6 +5,10 @@ const schema = mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },
+    articles: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'article'
     }
 });
 

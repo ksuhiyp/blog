@@ -13,8 +13,8 @@ const errorHandler = require('../controllers/errorHandler');
 
 exports.getAllArticles = ((req, res, next) => {
     //TODO: filter capability 
-
-    articleModel.getArticles(null, null, null, (err, articles) => {
+    population = ['author', 'user_name']
+    articleModel.getArticles(null, null, null, population, (err, articles) => {
         if (err)
             next(err);
         if (!articles.length)
@@ -29,7 +29,7 @@ exports.getOneArticle = (req, res, next) => {
     if (!errorHandler.validateObjId(id))
         next(createError(400, `Invalid id parameter ${id}`))
 
-    articleModel.getOneArticle(id, (err, article) => {
+    articleModel.getOneArticle(id, population, (err, article) => {
         if (err)
             next(err);
         if (!article)
