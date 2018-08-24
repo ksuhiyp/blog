@@ -55,21 +55,43 @@ const schema = mongoose.Schema({
 
     },
     articles: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'article'
     }
 
 });
 
+
+
+schema.post('remove', (user, next) => {
+    console.log('pre remove triggered');
+
+    user.model('article').deleteMany({ "_id": { "$in": user.articles } }, (err, article) => {
+        if (err)
+            return next(err);
+        if (!user)
+            return next(createError(400, 'Author not found in User list!'));
+        next();
+
+    });
+})
+
 exports.userModel = userModel = mongoose.model('user', schema);
 
 //Get User
-exports.getUser = (condition, callback) => {
-    userModel.findOne(condition, callback);
+exports.getUser = (condition, population, callback) => {
+    userModel.findOne(condition).
+        populate(population).
+        select('-password -__v').
+        exec(callback);
 }
 //Get Users
-exports.getAllUsers = (condition, options, projection, callback) => {
-    userModel.find(condition, options, projection, callback);
+exports.getAllUsers = (condition, options, projection, population, callback) => {
+    userModel.
+        find(condition, options, projection).
+        select('-password -__v ').
+        populate(population).
+        exec(callback);
 }
 //create User
 exports.createUser = (user, callback) => {
@@ -78,13 +100,13 @@ exports.createUser = (user, callback) => {
 }
 //delete User
 exports.deleteUser = (id, callback) => {
-    userModel.findByIdAndRemove(id, callback);
+    userModel.findOne(id, (callback));
 }
 //delete Users
 exports.deleteUsers = (query, callback) => {
     userModel.deleteMany(query, callback);
 }
 //update User
-exports.updateUser = (id, user, callback) => {
-    userModel.findByIdAndUpdate(id, user, callback);
+exports.updateUser = (id, user, options, callback) => {
+    userModel.findByIdAndUpdate(id, user, options, callback);
 }

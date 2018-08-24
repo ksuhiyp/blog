@@ -1,7 +1,6 @@
 const userModel = require('../models/user');
 const createError = require('http-errors');
-const errorHandler = require('../controllers/errorHandler');
-//filter and customise sinsitive returned data 
+const errorHandler = require('../errorHandler');
 exports.createUser = (req, res, next) => {
     body = req.body;
     user = new userModel.userModel({})
@@ -27,21 +26,31 @@ exports.createUser = (req, res, next) => {
 
 exports.getUser = (req, res, next) => {
     const id = req.params._id;
+    population = {
+        path: 'articles',
+        model: 'article',
+        select: 'title'
+    };
     if (!errorHandler.validateObjId(id))
-        next(createError(400, `Invalid id parameter ${id}`));
-    else
-        userModel.getUser({ "_id": id }, (err, user) => {
-            if (err)
-                next(err);
-            if (!user)
-                res.status(204).send();
-            else
-                res.status(200).json(user);
+        return next(createError(400, `Invalid id parameter ${id}`));
+
+    userModel.getUser({ "_id": id }, population, (err, user) => {
+        if (err)
+            next(err);
+        if (!user)
+            return next(createError(400, `user not found!`));
+
+        res.status(200).json({
+            "message": "success",
+            "operation": "Create User",
+            "data": user
         });
+    });
 }
 
 exports.getAllUsers = (req, res, next) => {
-    userModel.getAllUsers(null, null, null, (err, users) => {
+    population = ['articles', 'title']
+    userModel.getAllUsers(null, null, null, population, (err, users) => {
         if (err)
             next(err);
         if (!users.length)
@@ -54,17 +63,18 @@ exports.getAllUsers = (req, res, next) => {
 exports.deleteUser = (req, res, next) => {
     id = req.params._id;
     if (!errorHandler.validateObjId(id))
-        next(createError(400, `Invalid Parameter id ${id}`));
-    else
-        userModel.deleteUser(id, (err, user) => {
-            if (err)
-                next(err);
-            if (!user)
-                next(createError(400, 'Somthing wrong'));
-            res.status(200).json({
-                'Operation': 'deleteUser', 'user': user._id
-            })
+        return next(createError(400, `Invalid Parameter id ${id}`));
+    userModel.userModel.findById(id, (err, user) => {
+        if (err)
+            next(err);
+        if (!user)
+            next(createError(400, 'Somthing wrong'));
+        user.remove();
+        res.status(200).json({
+            'Operation': 'deleteUser', 'user': user._id
         })
+    })
+
 
 }
 exports.deleteManyUsers = (req, res, next) => {
@@ -102,9 +112,9 @@ exports.updateUser = (req, res, next) => {
 
         doc.save((err, doc) => {
             if (err)
-                next(createError(400, err));
+                return next(createError(400, err));
             if (!doc)
-                next(createError(400, "doc not found"));
+                return next(createError(400, "doc not found"));
             res.status(200).json({ "operation": "updateuser", "updateuser": doc.user_name })
 
         });

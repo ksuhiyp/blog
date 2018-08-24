@@ -1,7 +1,7 @@
 const articleModel = require('../models/article');
 const createError = require('http-errors');
-const ObjectId = require('mongoose').Types.ObjectId;
-const errorHandler = require('../controllers/errorHandler');
+const errorHandler = require('../errorHandler');
+
 
 /**
  * Can be used to list all aticles or specific list of articles depending on @param {query} 
@@ -13,7 +13,7 @@ const errorHandler = require('../controllers/errorHandler');
 
 exports.getAllArticles = ((req, res, next) => {
     //TODO: filter capability 
-    population = ['author', 'user_name']
+    population = ['author', 'first_name']
     articleModel.getArticles(null, null, null, population, (err, articles) => {
         if (err)
             next(err);
@@ -26,6 +26,8 @@ exports.getAllArticles = ((req, res, next) => {
 
 exports.getOneArticle = (req, res, next) => {
     const id = req.params._id;
+    population = ['author', 'first_name']
+
     if (!errorHandler.validateObjId(id))
         next(createError(400, `Invalid id parameter ${id}`))
 
@@ -39,22 +41,26 @@ exports.getOneArticle = (req, res, next) => {
     })
 }
 exports.createArticle = (req, res, next) => {
-    const data = req.body
-    const article = new articleModel.articleModel();
-    for (prop in req.body) {
-        article[prop] = req.body[prop];
-    }
-    articleModel.createArticle(article, (err, article) => {
+    data = new articleModel.articleModel(req.body)
+    articleModel.createArticle(data, (err, article) => {
         if (err)
-            next(err)
-        else
-            res.status(200).json({
-                "Operation": "Create Article",
-                "article_id": article._id
-            })
+            return next(err);
 
-    })
+        if (!article)
+            return next(createError(400, 'somthing went wrong!'));
+
+
+        res.status(200).json({
+            "Operation": "Create Article",
+            "article_id": article._id
+        });
+
+    });
+
+
+
 }
+
 //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
 exports.deleteArticles = (req, res, next) => {
     if (!req.query.id)
@@ -126,6 +132,9 @@ exports.updateArticle = (req, res, next) => {
         });
     });
 }
+
+exports.getArticlesByCategory = (req,res,next)=>{}
+exports.getArticlesByTag = (req,res,next)=>{}
 
 
 

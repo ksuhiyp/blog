@@ -1,4 +1,16 @@
 const mongoose = require('mongoose');
+const tagsSchema = mongoose.Schema({
+    title: {
+        type: String, index: true, enum: ['tag1', 'tag2', 'tag3']
+
+    }
+});
+const categoriesSchema = mongoose.Schema({
+    title: {
+        type: String, index: true, enum: ['categories1', 'categories2', 'categories3']
+
+    }
+});
 const schema = mongoose.Schema({
     title: {
         type: String,
@@ -13,17 +25,8 @@ const schema = mongoose.Schema({
         required: true,
         ref: 'user'
     },
-    tags: {
-        type: [mongoose.Schema.Types.ObjectId],
-        required: false,
-        ref: 'tags'
-    },
-    categories: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'category'
-    },
-
+    tags: [tagsSchema],
+    categories: [categoriesSchema],
     create_date: {
         type: Date,
         default: Date.now
@@ -45,6 +48,29 @@ const schema = mongoose.Schema({
             type: Array
         }
     }
+});
+schema.post('save', (article, next) => {
+
+    article.model('user').updateOne({ "_id": article.author }, { $push: { articles: article._id } }, { new: true }, (err, user) => {
+
+        if (err)
+            return next(err);
+        if (!user)
+            return next(createError(400, 'Author not found in User list!'));
+        next();
+
+
+    });
+});
+schema.pre('remove', (article, next) => {
+    article.model('user').updateOne({ "_id": article.author }, { $pull: { articles: article._id } }, { new: true }, (err, user) => {
+        if (err)
+            return next(err);
+        if (!user)
+            return next(createError(400, 'Author not found in User list!'));
+        next();
+
+    });
 })
 
 exports.articleModel = articleModel = mongoose.model('article', schema);
@@ -59,7 +85,10 @@ exports.getArticles = (condition, options, projection, population, callback, lim
 }
 exports.getOneArticle = (id, populate, callback) => {
 
-    articleModel.findById(id).populate(...populate).exec(callback)
+    articleModel.
+        findById(id).
+        populate('author', 'user_name').
+        exec(callback)
 }
 exports.createArticle = (article, callback) => {
     articleModel.create(article, callback)
