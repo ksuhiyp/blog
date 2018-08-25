@@ -1,7 +1,8 @@
-const articleModel = require('../models/article');
+const articleModel = require('../models/article').articleModel;
 const createError = require('http-errors');
 const errorHandler = require('../errorHandler');
-
+const tagsModel = require('../models/tag');
+const categoriesModel = require('../models/category');
 
 /**
  * Can be used to list all aticles or specific list of articles depending on @param {query} 
@@ -14,7 +15,7 @@ const errorHandler = require('../errorHandler');
 exports.getAllArticles = ((req, res, next) => {
     //TODO: filter capability 
     population = ['author', 'first_name']
-    articleModel.getArticles(null, null, null, population, (err, articles) => {
+    articleModel.find(null, null, population, (err, articles) => {
         if (err)
             next(err);
         if (!articles.length)
@@ -31,7 +32,7 @@ exports.getOneArticle = (req, res, next) => {
     if (!errorHandler.validateObjId(id))
         next(createError(400, `Invalid id parameter ${id}`))
 
-    articleModel.getOneArticle(id, population, (err, article) => {
+    articleModel.findById(id, population, (err, article) => {
         if (err)
             next(err);
         if (!article)
@@ -41,8 +42,8 @@ exports.getOneArticle = (req, res, next) => {
     })
 }
 exports.createArticle = (req, res, next) => {
-    data = new articleModel.articleModel(req.body)
-    articleModel.createArticle(data, (err, article) => {
+    data = new articleModel(req.body)
+    articleModel.save(data, (err, article) => {
         if (err)
             return next(err);
 
@@ -112,15 +113,13 @@ exports.deleteArticle = (req, res, next) => {
 exports.updateArticle = (req, res, next) => {
     req.body.last_update = Date.now();
 
-    articleModel.getOneArticle(req.params._id, function (err, doc) {
+    articleModel.findById(req.params._id, function (err, doc) {
         if (err)
             next(createError(400, err));
         if (!doc)
             next(createError(400, "doc not found"));
-        for (prop in req.body) {
-            doc[prop] = req.body[prop];
-
-        }
+        for (prop in req.body)
+            doc[prop] = req.body[prop]
 
         doc.save((err, doc) => {
             if (err)
@@ -132,9 +131,22 @@ exports.updateArticle = (req, res, next) => {
         });
     });
 }
+exports.getArticlesByCategory = (req, res, next) => {
+    articleModel.articleModel.find({ 'categories._id': req.params._id }, 'title _id', (err, articles) => {
+        if (err)
+            return next(err);
+        if (!articles)
+            return next(createError(400, 'Not found'));
+        res.status(200).json({ "operation": "getArticlesByCategory", "Articles": articles })
 
-exports.getArticlesByCategory = (req,res,next)=>{}
-exports.getArticlesByTag = (req,res,next)=>{}
+    })
+};
+
+exports.getArticlesByTag = (req, res, next) => { }
+exports.getAllTags = (req, res, next) => {
+    res.status(201).json(['tag1', 'tag2', 'tag3'])
+
+}
 
 
 
