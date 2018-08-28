@@ -15,12 +15,19 @@ const schema = mongoose.Schema({
     },
     username: {
         type: String,
-        required: true,
+        required: 'Username is required',
+        trim: true,
         unique: true
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        validate: [
+
+            function (password) {
+                return password && password.length > 6;
+            }, 'Password should be longer'
+        ]
     },
     profile_picture: {
         type: String
@@ -28,6 +35,7 @@ const schema = mongoose.Schema({
     email: {
         type: String,
         required: true,
+        match: [/.+\@.+\..+/, "Please fill a valid email address"],
         unique: true
     },
     twitter: {
@@ -55,7 +63,12 @@ const schema = mongoose.Schema({
 });
 
 
-
+schema.virtual('fullName').
+    get(function () { return this.name.firstname + ' ' + this.name.lastname; }).
+    set(function (v) {
+        this.name.firstname = v.substr(0, v.indexOf(' '));
+        this.name.lastname = v.substr(v.indexOf(' ') + 1);
+    });
 schema.post('remove', (user, next) => {
 
     user.model('article').deleteMany({ "author": { "$in": user._id } }, (err, article) => {
