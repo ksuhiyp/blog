@@ -40,10 +40,10 @@ const schema = mongoose.Schema({
     },
     article_images: {
         main_image: {
-            String
+            type: String
         },
         body_images: {
-            type: Array
+            type: [String]
         }
     }
 });

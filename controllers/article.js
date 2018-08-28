@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const errorHandler = require('../errorHandler');
 
 
+
 /**
  * Can be used to list all aticles or specific list of articles depending on @param {query} 
  * query = { "_id": { "$in": ids } } || {}
@@ -52,7 +53,19 @@ exports.getOneArticle = (req, res, next) => {
         })
 }
 exports.createArticle = (req, res, next) => {
-    data = new articleModel(req.body)
+
+    data = new articleModel({
+        title: req.body.title,
+        body: req.body.body,
+        author: req.body.author,
+        tags: req.body.tags,
+
+        categories: req.body.categories,
+        description: req.body.description,
+        article_images: { "body_images": req.files.body_images.map((file) => { return file.path }), "main_image": req.files.main_image[0].path }
+    })
+   
+
     data.save((err, article) => {
         if (err)
             return next(err);
