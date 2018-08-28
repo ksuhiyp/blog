@@ -5,7 +5,7 @@ var dbURI = 'mongodb://127.0.0.1:27017/blog';
 //TODO secure mongodb with a secret and inject URI string from a config file
 // Create the database connection
 mongoose.connect(dbURI,{useNewUrlParser:true});
-
+mongoose.set('debug', true);
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function () {

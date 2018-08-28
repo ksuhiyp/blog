@@ -56,13 +56,18 @@ exports.deleteTag = (req, res, next) => {
     if (!errorHandler.validateObjId(req.params._id))
         return next(createError(400, "Invalid ID!"));
 
-    tagModel.findByIdAndRemove(req.params._id).exec((err, tag) => {
+    tagModel.findById(req.params._id).exec((err, tag) => {
         if (err)
             return next(err);
         if (!tag)
             return next(createError(400, "tag not found!"));
+        tag.remove((err) => {
+            if (err)
+                return next(err);
 
-        res.status(200).json({ "operation": "DELETE/tag", "tagId": tag._id })
+            res.status(200).json({ "operation": "DELETE/tag", "tagId": tag._id })
+
+        });
 
     })
 }

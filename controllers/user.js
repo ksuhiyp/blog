@@ -1,70 +1,70 @@
-const userModel = require('../models/user');
+const userModel = require('../models/user').model;
 const createError = require('http-errors');
 const errorHandler = require('../errorHandler');
 exports.createUser = (req, res, next) => {
-    body = req.body;
-    user = new userModel.userModel({})
+    user = new userModel(req.body)
 
-    for (prob in body) {
+    for (prob in req.body) {
 
         user[prob] = req.body[prob]
     }
 
-    userModel.createUser(user, (err, user) => {
+    user.save((err, user) => {
         if (err)
             return next(err);
         if (!user)
-            return next(createError(400, 'somthing wrong'));
+            return next(createError(500, 'somthing wrong'));
 
-        res.status(200).json({
+        res.status(201).json({
             "message": "success",
-            "operation": "Create User",
+            "operation": "POST/user",
             "data": user._id
         })
     })
 }
 
-exports.getUser = (req, res, next) => {
+exports.getUserById = (req, res, next) => {
     const id = req.params._id;
-    population = {
-        path: 'articles',
-        model: 'article',
-        select: 'title'
-    };
     if (!errorHandler.validateObjId(id))
         return next(createError(400, `Invalid id parameter ${id}`));
 
-    userModel.getUser({ "_id": id }, population, (err, user) => {
-        if (err)
-            next(err);
-        if (!user)
-            return next(createError(400, `user not found!`));
+    options = {};
 
-        res.status(200).json({
-            "message": "success",
-            "operation": "Create User",
-            "data": user
+    userModel.findOne({ "_id": id }).
+        select('-__v -password').
+        exec((err, user) => {
+            if (err)
+                next(err);
+            if (!user)
+                return next(createError(400, `user not found!`));
+
+            res.status(200).json({
+                "operation": "GET/user",
+                "Result": user
+            });
         });
-    });
 }
 
 exports.getAllUsers = (req, res, next) => {
-    population = ['articles', 'title']
-    userModel.getAllUsers(null, null, null, population, (err, users) => {
-        if (err)
-            next(err);
-        if (!users.length)
-            res.status(204).send()
-        else
-            res.status(200).json(users)
-    })
+    query = {}
+    options = {}
+    userModel.find(query, options).
+        select('-__v -password').
+        exec((err, users) => {
+            if (err)
+                next(err);
+            if (!users.length)
+                res.status(204).send()
+            else
+                res.status(200).json(users)
+        })
 }
 
 exports.deleteUser = (req, res, next) => {
     id = req.params._id;
     if (!errorHandler.validateObjId(id))
         return next(createError(400, `Invalid Parameter id ${id}`));
-    userModel.userModel.findById(id, (err, user) => {
+    userModel.findById(id, (err, user) => {
         if (err)
             next(err);
         if (!user)

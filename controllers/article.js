@@ -1,8 +1,7 @@
 const articleModel = require('../models/article').articleModel;
 const createError = require('http-errors');
 const errorHandler = require('../errorHandler');
-const tagsModel = require('../models/tag');
-const categoriesModel = require('../models/category');
+
 
 /**
  * Can be used to list all aticles or specific list of articles depending on @param {query} 
@@ -14,36 +13,47 @@ const categoriesModel = require('../models/category');
 
 exports.getAllArticles = ((req, res, next) => {
     //TODO: filter capability 
-    population = ['author', 'first_name']
-    articleModel.find(null, null, population, (err, articles) => {
-        if (err)
-            next(err);
-        if (!articles.length)
-            res.status(204).send()
-        else
-            res.status(200).json(articles)
-    })
+    authorPopulation = ['author', 'name'];
+    tagsPopulation = ['tags', 'title'];
+    categoriesPopulation = ['categorys', 'title'];
+    articleModel.find().
+        populate(...authorPopulation).
+        populate({ path: 'tags', model: 'tag' }).
+        populate({ path: 'categories', model: 'category' }).
+        exec((err, articles) => {
+            if (err)
+                next(err);
+            if (!articles.length)
+                res.status(204).send()
+            else
+                res.status(200).json(articles)
+        })
 })
 
 exports.getOneArticle = (req, res, next) => {
     const id = req.params._id;
-    population = ['author', 'first_name']
-
+    authorPopulation = ['author', 'name'];
+    tagsPopulation = ['tags', 'title'];
+    categoriesPopulation = ['categorys', 'title'];
     if (!errorHandler.validateObjId(id))
-        next(createError(400, `Invalid id parameter ${id}`))
+        return next(createError(400, `Invalid id parameter ${id}`));
 
-    articleModel.findById(id, population, (err, article) => {
-        if (err)
-            next(err);
-        if (!article)
-            res.status(204).send();
-        else
-            res.status(200).json(article)
-    })
+    articleModel.findById(id).
+        populate(authorPopulation).
+        populate({ path: 'tags', model: 'tag' }).
+        populate({ path: 'categories', model: 'category' }).
+        exec((err, article) => {
+            if (err)
+                next(err);
+            if (!article)
+                res.status(204).send();
+            else
+                res.status(200).json(article)
+        })
 }
 exports.createArticle = (req, res, next) => {
     data = new articleModel(req.body)
-    articleModel.save(data, (err, article) => {
+    data.save((err, article) => {
         if (err)
             return next(err);
 
@@ -51,8 +61,8 @@ exports.createArticle = (req, res, next) => {
             return next(createError(400, 'somthing went wrong!'));
 
 
-        res.status(200).json({
-            "Operation": "Create Article",
+        res.status(201).json({
+            "Operation": "POST/article",
             "article_id": article._id
         });
 
@@ -115,17 +125,19 @@ exports.updateArticle = (req, res, next) => {
 
     articleModel.findById(req.params._id, function (err, doc) {
         if (err)
-            next(createError(400, err));
+            return next(err);
         if (!doc)
-            next(createError(400, "doc not found"));
-        for (prop in req.body)
-            doc[prop] = req.body[prop]
+            return next(createError(204, 'article not found!'));
+        for (entity in req.body)
+            doc[entity] = req.body[entity];
+
 
         doc.save((err, doc) => {
+
             if (err)
-                next(createError(400, err));
+                return next(err);
             if (!doc)
-                next(createError(400, "doc not found"));
+                return next(createError(400, "doc not found"));
             res.status(200).json({ "operation": "updateArticle", "updateArticle": doc })
 
         });

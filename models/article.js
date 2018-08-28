@@ -1,20 +1,10 @@
 const mongoose = require('mongoose');
-const tagsSchema = mongoose.Schema({
-    title: {
-        type: String, index: true, enum: ['tag1', 'tag2', 'tag3']
 
-    }
-});
-const categoriesSchema = mongoose.Schema({
-    title: {
-        type: String, index: true, enum: ['categories1', 'categories2', 'categories3']
-
-    }
-});
 const schema = mongoose.Schema({
     title: {
         type: String,
         required: true,
+        unique: true
     },
     body: {
         type: String,
@@ -23,17 +13,25 @@ const schema = mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
+        index: true,
         ref: 'user'
     },
-    tags: [tagsSchema],
-    categories: [categoriesSchema],
+    tags: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'tag'
+    },
+
+    categories: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'category'
+    },
     create_date: {
         type: Date,
         default: Date.now
     },
     last_update: {
         type: Date,
-        default: null
+        default: Date.now()
 
     },
     description: {
@@ -49,29 +47,15 @@ const schema = mongoose.Schema({
         }
     }
 });
-schema.post('save', (article, next) => {
+// schema.pre('save', (article, next) => {
+//     next();
 
-    article.model('user').updateOne({ "_id": article.author }, { $push: { articles: article._id } }, { new: true }, (err, user) => {
 
-        if (err)
-            return next(err);
-        if (!user)
-            return next(createError(400, 'Author not found in User list!'));
-        next();
+// });
+// schema.pre('remove', (article, next) => {
+//     next();
 
-    });
-
-});
-schema.pre('remove', (article, next) => {
-    article.model('user').updateOne({ "_id": article.author }, { $pull: { articles: article._id } }, { new: true }, (err, user) => {
-        if (err)
-            return next(err);
-        if (!user)
-            return next(createError(400, 'Author not found in User list!'));
-        next();
-
-    });
-})
+// })
 
 exports.articleModel = articleModel = mongoose.model('article', schema);
 
