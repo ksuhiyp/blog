@@ -1,7 +1,7 @@
 const articleModel = require('../models/article').articleModel;
 const createError = require('http-errors');
 const errorHandler = require('../errorHandler');
-
+const fs = require('fs')
 
 
 /**
@@ -53,7 +53,6 @@ exports.getOneArticle = (req, res, next) => {
         })
 }
 exports.createArticle = (req, res, next) => {
-
     data = new articleModel({
         title: req.body.title,
         body: req.body.body,
@@ -64,11 +63,21 @@ exports.createArticle = (req, res, next) => {
         description: req.body.description,
         article_images: { "body_images": req.files.body_images.map((file) => { return file.path }), "main_image": req.files.main_image[0].path }
     })
-   
+
 
     data.save((err, article) => {
-        if (err)
+        if (err) {
+            for (file in req.files) {
+                path = req.files[file].map((element) => {
+                    fs.unlink(element.path, (err) => {
+                        if (err)
+                            return next(err)
+                    });
+                })
+            }
             return next(err);
+        }
+
 
         if (!article)
             return next(createError(400, 'somthing went wrong!'));

@@ -3,8 +3,30 @@ const router = app.Router();
 const articleController = require('../controllers/article');
 
 const multer = require('multer');
-const upload = multer({ dest: "uploads" });
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (file.fieldname === 'main_image')
+            cb(null, 'uploads/main_image')
+        else if (file.fieldname = 'body_images')
+            cb(null, 'uploads/body_images')
+
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname + '-' + Date.now())
+    }
+})
+const upload = multer({
+    storage: storage,
+    // fileFilter: (req, file, cb) => {
+    //     if (file.mimetype != 'image/png' || file.mimetype != 'image/jpeg' || file.mimetype != 'image/jpg') {
+    //         req.multerImageValidation = 'wrong type';
+    //         return cb(null, false)
+    //     }
+    //     return cb(null, true);
+    // }
+});
 cpUpload = upload.fields([{ name: 'main_image', maxCount: 1 }, { name: 'body_images', maxCount: 10 }])
+
 
 router.get('/', articleController.getAllArticles);
 router.get('/:_id', articleController.getOneArticle);
