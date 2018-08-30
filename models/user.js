@@ -4,13 +4,19 @@ const schema = mongoose.Schema({
 
         firstname: {
             type: String,
-            required: true
+            required: true,
+            trim: true
+
         },
         middlename: {
-            type: String
+            type: String,
+            trim: true
+
         },
         lastname: {
-            type: String
+            type: String,
+            trim: true
+
         },
     },
     username: {
@@ -36,7 +42,9 @@ const schema = mongoose.Schema({
         type: String,
         required: true,
         match: [/.+\@.+\..+/, "Please fill a valid email address"],
-        unique: true
+        unique: true,
+        trim: true
+
     },
     twitter: {
         type: String
@@ -48,7 +56,9 @@ const schema = mongoose.Schema({
         type: String
     },
     mobile: {
-        type: String
+        type: String,
+        trim: true
+
     }, create_date: {
         type: Date,
         default: Date.now

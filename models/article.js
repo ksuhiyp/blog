@@ -4,7 +4,8 @@ const schema = mongoose.Schema({
     title: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     body: {
         type: String,
