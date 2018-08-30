@@ -1,3 +1,3 @@
 use multer to handle static uploads for article images 
-
+    do the same done in to artciles to users
 start the auth implementation 

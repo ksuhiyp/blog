@@ -58,10 +58,12 @@ exports.createArticle = (req, res, next) => {
         body: req.body.body,
         author: req.body.author,
         tags: req.body.tags,
-
         categories: req.body.categories,
         description: req.body.description,
-        article_images: { "body_images": req.files.body_images.map((file) => { return file.path }), "main_image": req.files.main_image[0].path }
+        article_images: {
+            "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : "",
+            "main_image": req.files.main_image ? req.files.main_image[0].path : ""
+        }
     })
 
 

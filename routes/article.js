@@ -1,7 +1,7 @@
 const app = require('express');
 const router = app.Router();
 const articleController = require('../controllers/article');
-
+const createError = require('http-errors')
 const multer = require('multer');
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -12,18 +12,18 @@ var storage = multer.diskStorage({
 
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname + '-' + Date.now())
+        cb(null, Date.now() + '-' + file.originalname)
     }
 })
 const upload = multer({
     storage: storage,
-    // fileFilter: (req, file, cb) => {
-    //     if (file.mimetype != 'image/png' || file.mimetype != 'image/jpeg' || file.mimetype != 'image/jpg') {
-    //         req.multerImageValidation = 'wrong type';
-    //         return cb(null, false)
-    //     }
-    //     return cb(null, true);
-    // }
+    fileFilter: (req, file, cb) => {
+        if (!new RegExp('image/(.)*').test(file.mimetype)) {
+            req.multerImageValidation = 'wrong type';
+            return cb(createError(400, 'bad extension'), false)
+        }
+        return cb(null, true);
+    }
 });
 cpUpload = upload.fields([{ name: 'main_image', maxCount: 1 }, { name: 'body_images', maxCount: 10 }])
 
