@@ -1,10 +1,11 @@
-var mongoose   = require("mongoose")
+var mongoose = require("mongoose")
 
 // Build the connection string
 var dbURI = 'mongodb://127.0.0.1:27017/blog';
 //TODO secure mongodb with a secret and inject URI string from a config file
 // Create the database connection
-mongoose.connect(dbURI,{useNewUrlParser:true});
+mongoose.Promise = global.Promise
+mongoose.connect(dbURI, { useNewUrlParser: true });
 mongoose.set('debug', true);
 // CONNECTION EVENTS
 // When successfully connected
@@ -13,7 +14,7 @@ mongoose.connection.on('connected', function () {
 });
 
 // If the connection throws an error
-mongoose.connection.on('error',function (err) {
+mongoose.connection.on('error', function (err) {
   console.log('Mongoose default connection error: ' + err);
 });
 
@@ -23,7 +24,7 @@ mongoose.connection.on('disconnected', function () {
 });
 
 // If the Node process ends, close the Mongoose connection
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
   mongoose.connection.close(function () {
     console.log('Mongoose default connection disconnected through app termination');
     process.exit(0);

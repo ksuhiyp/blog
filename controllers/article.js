@@ -2,7 +2,7 @@ const articleModel = require('../models/article').articleModel;
 const createError = require('http-errors');
 const errorHandler = require('../errorHandler');
 const fs = require('fs')
-
+const multer = require('../config/multer')
 
 /**
  * Can be used to list all aticles or specific list of articles depending on @param {query} 
@@ -52,6 +52,7 @@ exports.getOneArticle = (req, res, next) => {
                 res.status(200).json(article)
         })
 }
+
 exports.createArticle = (req, res, next) => {
     data = new articleModel({
         title: req.body.title,
@@ -64,11 +65,15 @@ exports.createArticle = (req, res, next) => {
             "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : "",
             "main_image": req.files.main_image ? req.files.main_image[0].path : ""
         }
-    })
+    });
+    data.save().
+        then((article) => {
+            res.status(201).json({
+                "Operation": "POST/article",
+                "article_id": article._id
+            });
 
-
-    data.save((err, article) => {
-        if (err) {
+        }).catch((err) => {
             for (file in req.files) {
                 path = req.files[file].map((element) => {
                     fs.unlink(element.path, (err) => {
@@ -78,21 +83,40 @@ exports.createArticle = (req, res, next) => {
                 })
             }
             return next(err);
-        }
+        })
+};
+exports.updateArticle = (req, res, next) => {
+    req.body.last_update = Date.now();
 
+    articleModel.
+        findById(req.params._id).
+        exec().
+        then((doc) => {
+            if (!doc)
+                throw new Error('Docoment not found!!');
 
-        if (!article)
-            return next(createError(400, 'somthing went wrong!'));
+            doc.article_images.body_images.forEach((element) => {
+                fs.unlink(element, (err) => { })
+            });
+            fs.unlink(doc.article_images.main_image, (err) => { });
 
-
-        res.status(201).json({
-            "Operation": "POST/article",
-            "article_id": article._id
+            doc['title'] = req.body['title'];
+            doc['body'] = req.body['body'];
+            doc['author'] = req.body['author'];
+            doc['description'] = req.body['description'];
+            doc['tags'] = req.body['tags'];
+            doc['categories'] = req.body['categories'];
+            doc['article_images'] = {
+                "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : "",
+                "main_image": req.files.main_image ? req.files.main_image[0].path : ""
+            }
+            doc.save().
+                then((doc) => {
+                    res.status(200).json({ "operation": "updateArticle", "updateArticle": doc })
+                })
+        }).catch((err) => {
+            return next(err)
         });
-
-    });
-
-
 
 }
 
@@ -144,29 +168,7 @@ exports.deleteArticle = (req, res, next) => {
 
     })
 }
-exports.updateArticle = (req, res, next) => {
-    req.body.last_update = Date.now();
 
-    articleModel.findById(req.params._id, function (err, doc) {
-        if (err)
-            return next(err);
-        if (!doc)
-            return next(createError(204, 'article not found!'));
-        for (entity in req.body)
-            doc[entity] = req.body[entity];
-
-
-        doc.save((err, doc) => {
-
-            if (err)
-                return next(err);
-            if (!doc)
-                return next(createError(400, "doc not found"));
-            res.status(200).json({ "operation": "updateArticle", "updateArticle": doc })
-
-        });
-    });
-}
 exports.getArticlesByCategory = (req, res, next) => {
     articleModel.articleModel.find({ 'categories._id': req.params._id }, 'title _id', (err, articles) => {
         if (err)
