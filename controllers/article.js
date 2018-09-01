@@ -74,15 +74,14 @@ exports.createArticle = (req, res, next) => {
             });
 
         }).catch((err) => {
-            for (file in req.files) {
-                path = req.files[file].map((element) => {
-                    fs.unlink(element.path, (err) => {
-                        if (err)
-                            return next(err)
-                    });
+            req.files.body_images.forEach((element) => {
+                fs.unlink(element, (err) => {
+                    return next(err);
                 })
-            }
-            return next(err);
+            });
+            fs.unlink(req.files.main_image, (err) => {
+                return next(err);
+            });
         })
 };
 exports.updateArticle = (req, res, next) => {
@@ -96,9 +95,13 @@ exports.updateArticle = (req, res, next) => {
                 throw new Error('Docoment not found!!');
 
             doc.article_images.body_images.forEach((element) => {
-                fs.unlink(element, (err) => { })
+                fs.unlink(element, (err) => {
+                    return next(err);
+                })
             });
-            fs.unlink(doc.article_images.main_image, (err) => { });
+            fs.unlink(doc.article_images.main_image, (err) => {
+                return next(err);
+            });
 
             doc['title'] = req.body['title'];
             doc['body'] = req.body['body'];
