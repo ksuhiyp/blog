@@ -11,8 +11,8 @@ router.get('/getArticlesByCategory/:_id', articleController.getArticlesByCategor
 router.get('/getArticlesByTag/:_id', articleController.getArticlesByTag);
 
 router.post('/', multer, articleController.createArticle);
-router.delete('/deleteArticles', articleController.deleteArticles);
 router.delete('/:_id', articleController.deleteArticle);
+router.delete('/deleteArticles', articleController.deleteArticles);
 router.put('/:_id', cpUpload, articleController.updateArticle);
 
 

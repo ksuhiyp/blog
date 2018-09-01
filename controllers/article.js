@@ -137,6 +137,7 @@ exports.deleteArticles = (req, res, next) => {
             if (!article)
                 return next(createError(400, 'article not found to be deleted!'));
 
+
             res.status(200).json({ "operation": "deleteArticle", "deletedArticle": article._id });
 
         })
@@ -161,12 +162,21 @@ exports.deleteArticle = (req, res, next) => {
     if (!errorHandler.validateObjId(req.params._id))
         return next(createError(400, "Incorrect Id"));
     let id = req.params._id
-    articleModel.deleteArticle(id, (err, article) => {
+    articleModel.findByIdAndRemove(id, (err, article) => {
         if (err) {
             next(err)
         }
         if (!article)
             next(createError(400, 'article not found to be deleted!'));
+
+        article.article_images.body_images.forEach((element) => {
+            fs.unlink(element, (err) => {
+                return next(err);
+            })
+        });
+        fs.unlink(article.article_images.main_image, (err) => {
+            return next(err);
+        });
         res.status(200).json({ "operation": "deleteArticle", "deletedArticle": article._id })
 
     })
