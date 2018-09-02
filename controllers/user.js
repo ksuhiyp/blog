@@ -66,16 +66,22 @@ exports.deleteUser = (req, res, next) => {
     id = req.params._id;
     if (!errorHandler.validateObjId(id))
         return next(createError(400, `Invalid Parameter id ${id}`));
-    userModel.findById(id, (err, user) => {
-        if (err)
-            next(err);
+    userModel.findById(id).exec().then((user) => {
+
         if (!user)
-            next(createError(400, 'Somthing wrong'));
-        user.remove();
-        res.status(200).json({
-            'Operation': 'deleteUser', 'user': user._id
-        })
-    })
+            throw new Error('User not Found!');
+
+        user.
+            remove().
+            then((user) => {
+                if (user.profile_picture)
+                    rs.unlink(user.profile_picture, (err) => { throw new Error(err) })
+                res.status(200).json({
+                    'Operation': 'DELETE/user', 'user': user._id
+                })
+            }).catch(err => next(err));
+
+    }).catch((err) => next(err))
 
 
 }
@@ -112,7 +118,7 @@ exports.updateUser = (req, res, next) => {
                 doc[prop] = req.body[prop];
 
             }
-            doc.profile_picture = req.file.path
+            doc.profile_picture = req.file ? req.file.path : null
             doc.
                 save().
                 then((user) => {
@@ -123,17 +129,18 @@ exports.updateUser = (req, res, next) => {
                         "data": user._id
                     })
                 }).catch((err) => {
-                    fs.unlink(req.file.path, (err) => {
-                        return next(err)
-                    });
+                    if (req.file)
+                        fs.unlink(req.file.path, (err) => {
+                            return next(err)
+                        });
                     return next(err)
                 })
         }).catch((err) => {
-            fs.unlink(req.file.path, (err) => {
-                return next(err)
-            });
-            if (err)
-                next(createError(400, err));
+            if (req.file)
+                fs.unlink(req.file.path, (err) => {
+                    return next(err);
+                });
+            next(createError(400, err));
         });
 
 }
