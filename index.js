@@ -11,7 +11,7 @@ const errorHandler = require('./errorHandler');
 const app = express();
 app.use(compression())
 app.use(morgan('tiny'));
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded());
 app.use('/articles', require('./routes/article'));
 app.use('/users', require('./routes/user'));

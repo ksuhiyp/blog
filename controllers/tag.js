@@ -10,92 +10,81 @@ exports.getTagById = (req, res, next) => {
         findById(req.params._id).
         select('-__v').
         populate('articles', 'title').
-        exec((err, tag) => {
-            if (err)
-                return next(err);
+        exec().
+        then((tag) => {
             if (!tag)
                 return next(createError(400, `No, there is no tag with id of ${req.params._id}`));
-            res.status(201).json({ "Operation": 'get tag', "result": tag })
-        });
+                
+            res.status(201).json({ "Operation": 'GET/tag', "result": tag })
+        }).catch(err => next(err));
 
 }
 
 
 exports.getAllTags = (req, res, next) => {
     tagModel.
-        find(null).
-        select('-__v -articles').
-        populate('articles', 'title').
-        exec((err, tags) => {
-            if (err)
-                return next(err);
+        find().
+        select('-__v ').
+        exec().
+        then((tags) => {
             if (!tags)
-                return next(createError(204))
-            res.status(201).json({ "Operation": 'GET/allTags', "result": tags })
-        });
+                res.status(204);
+
+            res.status(201).json({ "Operation": 'GET/allTags', "Count": tags.length, "Result": tags });
+
+        }).catch((err) => next(err));
 }
 exports.createTag = (req, res, next) => {
 
     tag = new tagModel({ title: req.body.title });
 
-    tag.save((err, tag) => {
-        if (err)
-            return next(err);
-        if (!tag)
-            return next(createError(400, 'somthing went wrong!'));
+    tag.save().then((tag) => {
 
-        res.status(201).json({ "Operation": "POST/tag", tag: { title: tag.title, id: tag._id } })
-    })
+        if (!tag)
+            throw new Error('somthing went wrong!');
+
+        res.status(201).json({ "Operation": "POST/tag", "Result": { title: tag.title, id: tag._id } })
+    }).catch(err => next(err))
 
 
 }
 exports.deleteTag = (req, res, next) => {
-    if (!req.params._id)
-        return next(createError(400, 'missing Parameters!'));
 
     if (!errorHandler.validateObjId(req.params._id))
         return next(createError(400, "Invalid ID!"));
 
-    tagModel.findById(req.params._id).exec((err, tag) => {
-        if (err)
-            return next(err);
+    tagModel.findById(req.params._id).exec().then((tag) => {
+
         if (!tag)
-            return next(createError(400, "tag not found!"));
-        tag.remove((err) => {
-            if (err)
-                return next(err);
+            throw new Error('Tag not found!');
 
-            res.status(200).json({ "operation": "DELETE/tag", "tagId": tag._id })
+        tag.remove().then((doc) => {
 
-        });
+            res.status(201).json({ "operation": "DELETE/tag", "tagId": tag._id })
 
-    })
+        }).catch(err => next(err));
+
+    }).catch(err => next(err))
 }
 
 exports.updateTag = (req, res, next) => {
-    if (!req.params._id)
-        return next(createError(400, 'missing Parameters!'));
 
     if (!errorHandler.validateObjId(req.params._id))
         return next(createError(400, "Invalid ID!"));
-    tagModel.findById(req.params._id, (err, tag) => {
-        if (err)
-            return next(createError(500, err));
-        if (!tag)
-            return next(createError(204, "Tag not found"));
-        for (prop in req.body)
-            tag[prop] = req.body[prop];
 
+    tagModel.
+        findById(req.params._id).
+        then((tag) => {
 
-
-        tag.save((err, tag) => {
-            if (err)
-                next(createError(400, err));
             if (!tag)
-                next(createError(400, "Tag not found"));
-            res.status(200).json({ "operation": "PUT/tag", "updateTag": tag })
+                throw new Error('Tag Not Found!');
 
-        });
-    });
+            tag.title = req.body.title;
+
+            tag.save().then((tag) => {
+                res.status(200).json({ "operation": "PUT/tag", "updateTag": tag })
+
+            }).catch((err) => next(err));
+        }).catch((err) => next(createError(500, err)));
 
 }
