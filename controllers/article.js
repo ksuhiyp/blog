@@ -62,8 +62,8 @@ exports.createArticle = (req, res, next) => {
         categories: req.body.categories,
         description: req.body.description,
         article_images: {
-            "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : "",
-            "main_image": req.files.main_image ? req.files.main_image[0].path : ""
+            "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : null,
+            "main_image": req.files.main_image ? req.files.main_image[0].path : null
         }
     });
     data.save().
@@ -94,14 +94,16 @@ exports.updateArticle = (req, res, next) => {
             if (!doc)
                 throw new Error('Docoment not found!!');
 
-            doc.article_images.body_images.forEach((element) => {
-                fs.unlink(element, (err) => {
+            if (doc.article_images.body_images)
+                doc.article_images.body_images.forEach((element) => {
+                    fs.unlink(element, (err) => {
+                        return next(err);
+                    })
+                });
+            if (doc.article_images.main_image)
+                fs.unlink(doc.article_images.main_image, (err) => {
                     return next(err);
-                })
-            });
-            fs.unlink(doc.article_images.main_image, (err) => {
-                return next(err);
-            });
+                });
 
             doc['title'] = req.body['title'];
             doc['body'] = req.body['body'];
@@ -110,12 +112,15 @@ exports.updateArticle = (req, res, next) => {
             doc['tags'] = req.body['tags'];
             doc['categories'] = req.body['categories'];
             doc['article_images'] = {
-                "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : "",
-                "main_image": req.files.main_image ? req.files.main_image[0].path : ""
+                "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : null,
+                "main_image": req.files.main_image ? req.files.main_image[0].path : null
             }
             doc.save().
                 then((doc) => {
                     res.status(200).json({ "operation": "updateArticle", "updateArticle": doc })
+                }).catch((err) => {
+                    return next(err)
+
                 })
         }).catch((err) => {
             return next(err)
