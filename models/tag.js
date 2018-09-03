@@ -21,7 +21,7 @@ const schema = mongoose.Schema({
 // })
 schema.post('remove', (doc, next) => {
 
-    doc.model('article').findOneAndUpdate({ "tags._id": { "$in": doc._id } }, { $pull: { 'tags._id': doc._id } }, (err, tags) => {
+    doc.model('article').findOneAndUpdate({ "tags._id": { "$in": [doc._id] } }, { $pull: { 'tags._id': doc._id } }, (err, tags) => {
         if (err)
             return next(err);
         if (!doc)
