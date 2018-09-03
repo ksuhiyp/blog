@@ -107,21 +107,20 @@ exports.deleteManyUsers = (req, res, next) => {
     }
 }
 exports.updateUser = (req, res, next) => {
-    userModel.
-        findById({ "_id": req.params._id }).
+    userModel.findById({ "_id": req.params._id }).
         then((doc) => {
             if (!doc)
                 throw new Error('User Not Found!');
 
             req.body.last_update = Date.now();
+            if (doc.profile_picture)
+                fs.unlink(doc.profile_picture, err => new Error(err));
             for (prop in req.body) {
                 doc[prop] = req.body[prop];
-
             }
             doc.profile_picture = req.file ? req.file.path : null;
 
-            doc.
-                save().
+            doc.save().
                 then((user) => {
                     res.status(201).json({
                         "message": "success",
