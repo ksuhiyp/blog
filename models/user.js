@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const unlink = require('../helpers/unlink').unlinkFile
 const schema = mongoose.Schema({
     name: {
 
@@ -81,11 +82,18 @@ schema.virtual('fullName').
     });
 schema.post('remove', (user, next) => {
 
-    user.model('article').deleteMany({ "author": { "$in": user._id } }, (err, article) => {
+    user.model('article').find({ "author": user._id }, (err, articles) => {
         if (err)
             return next(err);
         if (!user)
             return next(createError(400, 'Author not found in User list!'));
+
+        articles.map((article) => {
+            if (article.article_images.body_images)
+                article.article_images.body_images.map((image) => unlink(image, (err) => next(err)));
+            if (article.article_images.main_image)
+                unlink(article.article_images.main_image, (err) => next(err));
+        });
         next();
 
     });
