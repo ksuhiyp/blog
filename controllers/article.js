@@ -1,6 +1,6 @@
 const articleModel = require('../models/article').articleModel;
 const createError = require('http-errors');
-const errorHandler = require('../errorHandler');
+const errorHandler = require('../helpers/errorHandler');
 const fs = require('fs')
 const multer = require('../config/multer')
 

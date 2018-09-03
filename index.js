@@ -6,7 +6,7 @@ const compression = require('compression')
 const passport = require('passport');
 const db = require('./config/db');
 const morgan = require('morgan');
-const errorHandler = require('./errorHandler');
+const errorHandler = require('./helpers/errorHandler');
 
 const app = express();
 app.use(compression())

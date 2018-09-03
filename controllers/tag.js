@@ -1,6 +1,6 @@
 const tagModel = require('../models/tag').model;
 const createError = require('http-errors');
-const errorHandler = require('../errorHandler');
+const errorHandler = require('../helpers/errorHandler');
 
 exports.getTagById = (req, res, next) => {
     if (!errorHandler.validateObjId(req.params._id))

@@ -1,5 +1,5 @@
 const categoriesModel = require('../models/category').model;
-const errorHandler = require('../errorHandler');
+const errorHandler = require('../helpers/errorHandler');
 const createError = require('http-errors');
 
 

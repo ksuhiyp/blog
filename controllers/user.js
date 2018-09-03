@@ -1,7 +1,7 @@
 const userModel = require('../models/user').model;
 const createError = require('http-errors');
-const errorHandler = require('../errorHandler');
-const fs = require('fs')
+const errorHandler = require('../helpers/errorHandler');
+const unlink = require('../helpers/unlink').unlinkFile
 
 exports.createUser = (req, res, next) => {
     user = new userModel(req.body)
@@ -17,9 +17,9 @@ exports.createUser = (req, res, next) => {
                 "data": user._id
             })
         }).catch((err) => {
-
-            fs.unlink(req.file.path, (err) => {
-                return next(err)
+            /**unlinking uploads at this stage could cause code race */
+            unlink(req.file.path, (err) => {
+                next(err)
             })
             return next(err);
         })
@@ -58,7 +58,9 @@ exports.getAllUsers = (req, res, next) => {
             if (!users.length)
                 res.status(204).send()
             else
-                res.status(200).json(users)
+                res.status(200).json({
+                    'Operation': 'GET/users', users, Count: users.length
+                })
         })
 }
 
@@ -71,11 +73,10 @@ exports.deleteUser = (req, res, next) => {
         if (!user)
             throw new Error('User not Found!');
 
-        user.
-            remove().
+        user.remove().
             then((user) => {
                 if (user.profile_picture)
-                    rs.unlink(user.profile_picture, (err) => { throw new Error(err) })
+                    unlink(user.profile_picture, (err) => next(err))
                 res.status(200).json({
                     'Operation': 'DELETE/user', 'user': user._id
                 })
@@ -114,7 +115,7 @@ exports.updateUser = (req, res, next) => {
 
             req.body.last_update = Date.now();
             if (doc.profile_picture)
-                fs.unlink(doc.profile_picture, err => new Error(err));
+                unlink(doc.profile_picture, err => next(err));
             for (prop in req.body) {
                 doc[prop] = req.body[prop];
             }
@@ -129,15 +130,15 @@ exports.updateUser = (req, res, next) => {
                     })
                 }).catch((err) => {
                     if (req.file)
-                        fs.unlink(req.file.path, (err) => {
-                            return next(err)
+                        unlink(req.file.path, (err) => {
+                            next(err)
                         });
                     return next(err)
                 })
         }).catch((err) => {
             if (req.file)
-                fs.unlink(req.file.path, (err) => {
-                    return next(err);
+                unlink(req.file.path, (err) => {
+                    next(err);
                 });
             next(createError(400, err));
         });

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const errorHandler = require('../errorHandler')
+const errorHandler = require('../helpers/errorHandler')
 const schema = mongoose.Schema({
     title: {
         type: String,
