@@ -93,7 +93,9 @@ schema.post('remove', (user, next) => {
                 article.article_images.body_images.map((image) => unlink(image, (err) => next(err)));
             if (article.article_images.main_image)
                 unlink(article.article_images.main_image, (err) => next(err));
+            article.remove();
         });
+
         next();
 
     });

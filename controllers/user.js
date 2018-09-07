@@ -87,27 +87,18 @@ exports.deleteUser = (req, res, next) => {
 
 
 }
-exports.deleteManyUsers = (req, res, next) => {
+exports.deleteManyUsers = async (req, res, next) => {
+
+
     try {
-        ids = req.query._id;
-        if (!errorHandler.validateObjIds(ids))
-            return next(createError(400, `Invalid Parameter id ${id}`));
-        ids.map(async (id) => {
-            user = await userModel.findById(id).exec()
-            if (!user)
-                throw new Error(`User with id ${id} not Found!`);
-
-            removedUser = await user.remove();
-
-            if (removedUser.profile_picture)
-                await unlink(removedUser.profile_picture, (err) => next(err));
-        })
-        res.status(200).json({
-            'Operation': 'DELETE/users', 'user': 'done'
-        })
-    } catch (error) {
-        return next(error)
+        users = await userModel.find({ "_id": { "$in": req.query._id } }).cursor();
+        for (doc = await users.next(); doc != null; doc = await users.next()) {
+            if (doc.profile_picture)
+                try { await fs.unlinkSync(doc.profile_picture) } catch (err) { };
+            await doc.remove()
+        }
     }
+    catch (err) { next(err) };
 }
 exports.updateUser = (req, res, next) => {
     userModel.findById({ "_id": req.params._id }).
