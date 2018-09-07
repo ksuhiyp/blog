@@ -84,47 +84,41 @@ exports.createArticle = (req, res, next) => {
             });
         })
 };
-exports.updateArticle = (req, res, next) => {
-    req.body.last_update = Date.now();
+exports.updateArticle = async (req, res, next) => {
+    try {
+        req.body.last_update = Date.now();
 
-    articleModel.
-        findById(req.params._id).
-        exec().
-        then((doc) => {
-            if (!doc)
-                throw new Error('Docoment not found!!');
+        doc = await articleModel.findById(req.params._id)
+        if (!doc)
+            throw new Error('Docoment not found!!');
 
-            if (doc.article_images.body_images)
-                doc.article_images.body_images.forEach((element) => {
-                    fs.unlink(element, (err) => {
-                        return next(err);
-                    })
-                });
-            if (doc.article_images.main_image)
-                fs.unlink(doc.article_images.main_image, (err) => {
-                    return next(err);
-                });
+        if (doc.article_images.body_images)
+            doc.article_images.body_images.forEach(async (element) => {
+                try { await fs.unlinkSync(element) } catch (err) { }
+            });
+        if (doc.article_images.main_image)
+            try { await fs.unlinkSync(doc.article_images.main_image) } catch (err) { }
 
-            doc['title'] = req.body['title'];
-            doc['body'] = req.body['body'];
-            doc['author'] = req.body['author'];
-            doc['description'] = req.body['description'];
-            doc['tags'] = req.body['tags'];
-            doc['categories'] = req.body['categories'];
-            doc['article_images'] = {
-                "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : null,
-                "main_image": req.files.main_image ? req.files.main_image[0].path : null
-            }
-            doc.save().
-                then((doc) => {
-                    res.status(200).json({ "operation": "updateArticle", "updateArticle": doc })
-                }).catch((err) => {
-                    return next(err)
 
-                })
-        }).catch((err) => {
-            return next(err)
-        });
+        doc['title'] = req.body['title'];
+        doc['body'] = req.body['body'];
+        doc['author'] = req.body['author'];
+        doc['description'] = req.body['description'];
+        doc['tags'] = req.body['tags'];
+        doc['categories'] = req.body['categories'];
+        doc['article_images'] = {
+            "body_images": req.files.body_images ? req.files.body_images.map((file) => { return file.path }) : null,
+            "main_image": req.files.main_image ? req.files.main_image[0].path : null
+        }
+        article = await doc.save();
+
+        res.status(200).json({ "operation": "PUT/article", article })
+    }
+
+
+    catch (err) {
+        return next(err)
+    };
 
 }
 
