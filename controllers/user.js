@@ -18,9 +18,10 @@ exports.createUser = (req, res, next) => {
             })
         }).catch((err) => {
             /**unlinking uploads at this stage could cause code race */
-            unlink(req.file.path, (err) => {
-                next(err)
-            })
+            if (req.file)
+                unlink(req.file.path, (err) => {
+                    next(err)
+                })
             return next(err);
         })
 }
@@ -87,24 +88,25 @@ exports.deleteUser = (req, res, next) => {
 
 }
 exports.deleteManyUsers = (req, res, next) => {
+    try {
+        ids = req.query._id;
+        if (!errorHandler.validateObjIds(ids))
+            return next(createError(400, `Invalid Parameter id ${id}`));
+        ids.map(async (id) => {
+            user = await userModel.findById(id).exec()
+            if (!user)
+                throw new Error(`User with id ${id} not Found!`);
 
-    if (!req.query._id)
-        next(createError(400, 'No query provided!'));
+            removedUser = await user.remove();
 
-    if (!errorHandler.validateObjIds(req.query._id))
-        next(createError(400, 'dirty ids provided! check your params'));
-
-    else {
-        usersToDelete = { '_id': { '$in': req.query._id } }
-        userModel.deleteUsers(usersToDelete, (err, users) => {
-            if (err)
-                next(err);
-            if (!users)
-                next(createError(400, 'why users are falsy?'));
-            else
-                res.status(200).json({ "Operation": "delete Many Users", "successfull": users.ok ? true : false, 'deleteCount': users.n })
+            if (removedUser.profile_picture)
+                await unlink(removedUser.profile_picture, (err) => next(err));
         })
-
+        res.status(200).json({
+            'Operation': 'DELETE/users', 'user': 'done'
+        })
+    } catch (error) {
+        return next(error)
     }
 }
 exports.updateUser = (req, res, next) => {

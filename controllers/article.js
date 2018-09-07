@@ -129,35 +129,33 @@ exports.updateArticle = (req, res, next) => {
 }
 
 //{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }
-exports.deleteArticles = (req, res, next) => {
-    if (!req.query.id)
-        return next(createError(400, 'No parameters provided'));
-    if (!Array.isArray(req.query.id)) {
-        if (!errorHandler.validateObjId(req.query.id))
-            return next(createError(400, "Incorrect Id"));
-        articleModel.deleteArticle(req.query.id, (err, article) => {
-            if (err) {
-                return next(err)
-            }
-            if (!article)
-                return next(createError(400, 'article not found to be deleted!'));
+exports.deleteArticles = async (req, res, next) => {
+    try {
+        articles = await articleModel.find({ "_id": { "$in": req.query._id } }).cursor();
+        let removedArticles = []
+        for (doc = await articles.next(); doc != null; doc = await articles.next()) {
+
+            if (doc.article_images.body_images.length)
+                doc.article_images.body_images.forEach(async (img) => {
+                    try { await fs.unlinkSync(img) } catch (err) {
+                        // next(err);
+                    }
+                });
+            if (doc.article_images.main_image)
+                try { await fs.unlinkSync(doc.article_images.main_image) } catch (err) {
+                    // next(err);
+                }
+
+        }
+        removedArticles = await articleModel.remove({ "_id": { "$in": req.query._id } })
+        res.status(200).json({ "operation": "DELETE/Articles", "Articles": removedArticles })
 
 
-            res.status(200).json({ "operation": "deleteArticle", "deletedArticle": article._id });
-
-        })
+    } catch (error) {
+        next(error)
     }
-    else {
-        if (!errorHandler.validateObjIds(req.query.id))
-            return next(createError(400, 'One or more ids are Invalid'));
-        let ids = req.query.id
-        let query = { '_id': { '$in': ids } }
-        articleModel.deleteManyArticles(query, (err, articles) => {
-            if (err) {
-                return next(createError(500, err.message))
-            }
-            res.status(200).json({ "operation": "deleteArticles", "deletedArticles": articles.n })
-        })
+    finally {
+
     }
 
 }
