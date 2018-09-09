@@ -1,17 +1,17 @@
 const userModel = require('../models/user').model;
 const createError = require('http-errors');
 const errorHandler = require('../helpers/errorHandler');
-const unlink = require('../helpers/unlink').unlinkFile
-const hasher = require('../config/hasher')
+const unlink = require('../helpers/unlink').unlinkFile;
+const hasher = require('../config/hasher');
+const JWT = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 exports.createUser = async (req, res, next) => {
     try {
         user = new userModel(req.body)
         user.profile_picture = req.file ? req.file.path : '';
         if (!req.body.password)
-            return next(createError(400, 'Password required'))
+            return next(createError(400, 'Password required'));
         user.password = await hasher.hash(req.body.password, 10);
-        console.log( hasher.hash(req.body.password, 10));
-        
         user = await user.save();
         res.status(201).json({
             "message": "success",
@@ -27,6 +27,26 @@ exports.createUser = async (req, res, next) => {
         return next(err);
     }
 }
+exports.getJWT = async (req, res, next) => {
+    //TODO: Find User then compare password
+    email = req.body.email;
+    password = req.body.password;
+    user = await userModel.findOne({ email: email });
+    if (user) {
+        bcrypt.compare(password, user.password, (err, done) => {
+            if (done)
+                return res.status(200).send(JWT.sign({ "_id": user._id }, process.env.SECRET_OR_KEY));
+            else
+                return res.status(401).json({ Operation: "Login", message: "Wrong Password!" });
+        })
+    }
+    else
+        res.status(401).json({ Operation: "Login", message: "User Not Founde!" });
+
+    //TODO: compare plain password with salt using bcrypt
+
+}
+
 exports.getUserById = (req, res, next) => {
     const id = req.params._id;
     if (!errorHandler.validateObjId(id))
