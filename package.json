@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ksuhiyp/blog#readme",
   "dependencies": {
+    "bcrypt": "^3.0.0",
     "compression": "^1.7.3",
     "cors": "^2.8.4",
     "encodeurl": "^1.0.2",

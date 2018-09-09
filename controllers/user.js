@@ -2,30 +2,31 @@ const userModel = require('../models/user').model;
 const createError = require('http-errors');
 const errorHandler = require('../helpers/errorHandler');
 const unlink = require('../helpers/unlink').unlinkFile
-
-exports.createUser = (req, res, next) => {
-    user = new userModel(req.body)
-
-    user.profile_picture = req.file ? req.file.path : '';
-
-    user.
-        save().
-        then((user) => {
-            res.status(201).json({
-                "message": "success",
-                "operation": "POST/user",
-                "data": user._id
+const hasher = require('../config/hasher')
+exports.createUser = async (req, res, next) => {
+    try {
+        user = new userModel(req.body)
+        user.profile_picture = req.file ? req.file.path : '';
+        if (!req.body.password)
+            return next(createError(400, 'Password required'))
+        user.password = await hasher.hash(req.body.password, 10);
+        console.log( hasher.hash(req.body.password, 10));
+        
+        user = await user.save();
+        res.status(201).json({
+            "message": "success",
+            "operation": "POST/user",
+            "data": user._id
+        });
+    } catch (err) {
+        /**unlinking uploads at this stage could cause code race */
+        if (req.file)
+            unlink(req.file.path, (err) => {
+                next(err)
             })
-        }).catch((err) => {
-            /**unlinking uploads at this stage could cause code race */
-            if (req.file)
-                unlink(req.file.path, (err) => {
-                    next(err)
-                })
-            return next(err);
-        })
+        return next(err);
+    }
 }
-
 exports.getUserById = (req, res, next) => {
     const id = req.params._id;
     if (!errorHandler.validateObjId(id))
