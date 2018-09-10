@@ -2,7 +2,7 @@ const app = require('express');
 const router = app.Router();
 const articleController = require('../controllers/article');
 const multer = require('../config/multer').articleUpload
-
+const passport = require('../controllers/auth/passport')
 
 router
     .get('/', articleController.getAllArticles)
