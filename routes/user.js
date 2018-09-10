@@ -13,6 +13,7 @@ router
     .all('*', passport.authenticate('jwt', { session: false }), (req, res, next) => { next(); })
     .get('/:_id', userController.getUserById)
     .get('/', userController.getAllUsers)
+    .put('/resetPassword', userController.resetPassword)
     .put('/:_id', multer, userController.updateUser)
     .delete('/:_id', userController.deleteUser)
     .delete('/', userController.deleteManyUsers);

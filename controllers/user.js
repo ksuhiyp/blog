@@ -38,7 +38,7 @@ exports.getJWT = async (req, res, next) => {
     if (user) {
         bcrypt.compare(password, user.password, (err, done) => {
             if (done)
-                return res.status(200).send(JWT.sign({ "_id": user._id }, process.env.SECRET_OR_KEY, { expiresIn: 60 }));
+                return res.status(200).send(JWT.sign({ "_id": user._id }, process.env.SECRET_OR_KEY, { expiresIn: 60 * 60 }));
             else
                 return res.status(401).json({ Operation: "Login", message: "Wrong Password!" });
         })
@@ -48,6 +48,31 @@ exports.getJWT = async (req, res, next) => {
 
     //TODO: compare plain password with salt using bcrypt
 
+}
+
+exports.resetPassword = async (req, res, next) => {
+    if (req.body.oldPassword === req.body.newPassword)
+        return next(createError(400, "New Password should be not Old one!"));
+    user = await userModel.findOne({ "_id": req.query._id }).catch(err => next(err));
+    if (user) {
+        match = await bcrypt.compare(req.body.oldPassword, user.password).catch(err => next(err));
+        if (match) {
+            user.password = await hasher.hash(req.body.newPassword, 10).catch(err => next(err));
+            user = await user.save().catch(err => next(err));
+            if (user) {
+                return res.status(200).json({
+                    'Operation': 'PUT/User-Password', user: user._id
+                })
+            }
+
+        }
+        else {
+            return next(createError(401, 'Wrong Password!'))
+        }
+    }
+    else {
+        return res.status(400).json({ Operation: "PUT/Reset-Password", message: "User Not Found!" });
+    }
 }
 
 exports.getUserById = (req, res, next) => {
