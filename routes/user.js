@@ -8,8 +8,9 @@ const router = app.Router();
 
 
 router
-    .post('/', multer, passport.authenticate('jwt', { session: false }), userController.createUser)
+    .post('/', multer, userController.createUser)
     .post('/login', userController.getJWT)
+    .all('*', passport.authenticate('jwt', { session: false }), (req, res, next) => { next(); })
     .get('/:_id', userController.getUserById)
     .get('/', userController.getAllUsers)
     .put('/:_id', multer, userController.updateUser)

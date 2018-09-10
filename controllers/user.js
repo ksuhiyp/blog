@@ -5,8 +5,11 @@ const unlink = require('../helpers/unlink').unlinkFile;
 const hasher = require('../config/hasher');
 const JWT = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+
 exports.createUser = async (req, res, next) => {
     try {
+        console.log(req.isAuthenticated());
+
         user = new userModel(req.body)
         user.profile_picture = req.file ? req.file.path : '';
         if (!req.body.password)

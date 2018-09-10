@@ -4,16 +4,16 @@ const articleController = require('../controllers/article');
 const multer = require('../config/multer').articleUpload
 
 
-router.get('/', articleController.getAllArticles);
-router.get('/:_id', articleController.getOneArticle);
-router.get('/getArticlesByCategory/:_id', articleController.getArticlesByCategory);
-router.get('/getArticlesByTag/:_id', articleController.getArticlesByTag);
-
-router.post('/', multer, articleController.createArticle);
-router.delete('/:_id', articleController.deleteArticle);
-router.delete('/', articleController.deleteArticles);
-
-router.put('/:_id', multer, articleController.updateArticle);
+router
+    .get('/', articleController.getAllArticles)
+    .get('/:_id', articleController.getOneArticle)
+    .get('/getArticlesByCategory/:_id', articleController.getArticlesByCategory)
+    .get('/getArticlesByTag/:_id', articleController.getArticlesByTag)
+    .all('*', passport.authenticate('jwt', { session: false }), (req, res, next) => { next(); })
+    .post('/', multer, articleController.createArticle)
+    .delete('/:_id', articleController.deleteArticle)
+    .delete('/', articleController.deleteArticles)
+    .put('/:_id', multer, articleController.updateArticle);
 
 
 
