@@ -1,7 +1,8 @@
 <mat-toolbar color="primary">
-    <a class='brand' mat-button routerLink="/"><i class="material-icons">
-            assignment
-        </i> B L O G</a>
     <div class="spacer"></div>
-    <a class='center' mat-button routerLink=".">Actions</a>
+    <a class='brand' mat-button routerLink="/">SUHAIB BLOG</a>
+    <div class="spacer"></div>
+    <a class='center' mat-button routerLink=".">
+        <button mat-button (click)="openDialog()">Login</button>
+    </a>
 </mat-toolbar>

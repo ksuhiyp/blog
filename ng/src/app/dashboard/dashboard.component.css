@@ -1,0 +1,27 @@
+:host{
+    display: flex;
+    flex-direction: row;
+}
+
+.articles{
+    flex-direction: column;
+
+
+}
+.example-card {
+    max-width: 50rem;
+    flex-grow: 1;
+    flex-shrink: 0;
+    margin: 1rem
+
+  }
+  
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+  }
+
+  .spacer{
+    flex-grow: 1;flex-shrink: 0
+}
+
