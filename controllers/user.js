@@ -38,7 +38,7 @@ exports.getJWT = async (req, res, next) => {
     if (user) {
         bcrypt.compare(password, user.password, (err, done) => {
             if (done)
-                return res.status(200).json({'token':JWT.sign({ "_id": user._id }, process.env.SECRET_OR_KEY, { expiresIn: 60 * 60 }),'user':user.name.firstname});
+                return res.status(200).json({'token':JWT.sign({ "_id": user._id }, process.env.SECRET_OR_KEY, { expiresIn: 60 * 60 }),'userlogin form validation messageslogin form validation messages':user.name.firstname});
             else
                 return res.status(401).json({ Operation: "Login", message: "Wrong Password!" });
         })
