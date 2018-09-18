@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -25,7 +26,7 @@ import { LoginComponent } from './login/login.component';
         MatToolbarModule,
         MatButtonModule,
         MatSidenavModule,
-        MatIconModule,
+        MatIconModule, HttpClientModule,
         MatListModule,
         MatCardModule,
         MatDialogModule,

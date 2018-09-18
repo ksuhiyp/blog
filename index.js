@@ -8,7 +8,9 @@ const passport = require('./controllers/auth/passport');
 const db = require('./config/db');
 const morgan = require('morgan');
 const errorHandler = require('./helpers/errorHandler');
+const cors = require('cors')
 const app = express();
+app.use(cors())
 app.use(compression())
 app.use(morgan('tiny'));
 app.use(bodyParser.json());

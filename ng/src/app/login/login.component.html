@@ -1,15 +1,17 @@
-<form #form="ngForm" (ngSubmit)="onSubmit();form.reset();">
+<form #form="ngForm" (ngSubmit)="onSubmit()">
   <h3 mat-dialog-title>Login</h3>
   <mat-dialog-content>
     <mat-form-field>
-      <input matInput placeholder="Email" name="email" [(ngModel)]="model.Email">
+      <input matInput placeholder="Email" name="email" [(ngModel)]="model.email" required>
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Password" [(ngModel)]='model.password' name="password">
+      <input matInput placeholder="Password" [(ngModel)]='model.password' name="password" required>
     </mat-form-field>
+    <mat-error *ngIf="logged==false" ><div *ngFor="let message of messages">{{message.error.message}}</div></mat-error>
+
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>No</button>
-    <button type="submit" mat-raised-button mat-dialog-close>Login</button>
+    <button type="submit" mat-raised-button [disabled]="!form.form.valid">Login</button>
   </mat-dialog-actions>
 </form>
