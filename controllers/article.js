@@ -75,13 +75,15 @@ exports.createArticle = (req, res, next) => {
 
         }).catch((err) => {
             req.files.body_images.forEach((element) => {
-                fs.unlink(element, (err) => {
+                fs.unlink(element.path, (err) => {
                     return next(err);
                 })
             });
-            fs.unlink(req.files.main_image, (err) => {
+            fs.unlink(req.files.main_image[0].path, (err) => {
                 return next(err);
             });
+            return next(err);
+
         })
 };
 exports.updateArticle = async (req, res, next) => {

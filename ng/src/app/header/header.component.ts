@@ -12,7 +12,7 @@ export class HeaderComponent implements OnInit {
   constructor(public dialog: MatDialog) { }
   loggedInUser;
   ngOnInit() {
-    this.loggedInUser = JSON.parse(localStorage.getItem('User'));
+    this.loggedInUser = JSON.parse(localStorage.getItem('user'));
 
     console.log(this.loggedInUser)
 
