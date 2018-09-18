@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
       .subscribe((data) => {
         if (data.token != '') {
           localStorage.setItem('token', JSON.stringify(data.token));
+          localStorage.setItem('User', JSON.stringify(data.user));
           this.logged = true;
           this.dialogRef.close()
 

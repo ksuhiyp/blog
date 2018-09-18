@@ -10,11 +10,17 @@ import { LoginComponent } from '../login/login.component';
 export class HeaderComponent implements OnInit {
 
   constructor(public dialog: MatDialog) { }
-
+  loggedInUser;
   ngOnInit() {
+    this.loggedInUser = JSON.parse(localStorage.getItem('User'));
+
+    console.log(this.loggedInUser)
+
   }
   openDialog(): void {
-
+    if (this.loggedInUser) {
+      return
+    }
     const dialogConfig = new MatDialogConfig()
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
@@ -23,12 +29,18 @@ export class HeaderComponent implements OnInit {
       width: '250px',
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      this.loggedInUser = JSON.parse(localStorage.getItem('User'));
+      console.log(this.loggedInUser)
     });
   }
 
 
   closeDialog() {
     this.dialog.closeAll()
+  }
+  logout() {
+    this.loggedInUser = null;
+    localStorage.clear();
+    
   }
 }

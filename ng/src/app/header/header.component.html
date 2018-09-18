@@ -3,6 +3,11 @@
     <a class='brand' mat-button routerLink="/">SUHAIB BLOG</a>
     <div class="spacer"></div>
     <a class='center' mat-button routerLink=".">
-        <button mat-button (click)="openDialog()">Login</button>
+        <button mat-button (click)="openDialog()" *ngIf='!loggedInUser'>Login</button>
+        <button mat-button [matMenuTriggerFor]="menu" *ngIf="loggedInUser">{{loggedInUser}}</button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="logout()">Logout</button>
+            <button mat-menu-item>About</button>
+        </mat-menu>
     </a>
 </mat-toolbar>

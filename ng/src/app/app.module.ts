@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';
-import { MatToolbarModule, MatInputModule, MatButtonModule, MatSidenavModule, MatFormFieldModule, MatIconModule, MatListModule, MatCardModule, MatDialogModule } from '@angular/material';
+import { MatToolbarModule, MatInputModule,MatMenuModule, MatButtonModule, MatSidenavModule, MatFormFieldModule, MatIconModule, MatListModule, MatCardModule, MatDialogModule } from '@angular/material';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -26,7 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
         MatToolbarModule,
         MatButtonModule,
         MatSidenavModule,
-        MatIconModule, HttpClientModule,
+        MatIconModule, HttpClientModule,MatMenuModule,
         MatListModule,
         MatCardModule,
         MatDialogModule,
