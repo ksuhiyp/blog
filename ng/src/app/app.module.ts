@@ -4,13 +4,32 @@ import { FormsModule } from '@angular/forms'
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';
-import { MatToolbarModule, MatInputModule,MatMenuModule, MatButtonModule, MatSidenavModule, MatFormFieldModule, MatIconModule, MatListModule, MatCardModule, MatDialogModule } from '@angular/material';
+import { MatToolbarModule, MatInputModule, MatMenuModule, MatButtonModule, MatSidenavModule, MatFormFieldModule, MatIconModule, MatListModule, MatCardModule, MatDialogModule } from '@angular/material';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ArticleComponent } from './article/article.component';
+import { RouterModule, Routes } from '@angular/router'
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { CreateArticleComponent } from './create-article/create-article.component';
+import { UsersComponent } from './users/users.component';
+import { CreateUserComponent } from './create-user/create-user.component';
+import { AboutComponent } from './about/about.component';
+const appRoutes: Routes = [
+    { path: "/articles", component: DashboardComponent },
+    { path: "article/:id", component: ArticleComponent },
+    { path: "article/create", component: CreateArticleComponent },
+    { path: "users", component: UsersComponent },
+    { path: "user/:id", component: UsersComponent },
+    { path: "user/create", component: CreateUserComponent },
+    { path: "/about", component: AboutComponent },
+    { path: "", redirectTo: '/articles' },
+    { path: "**", component: PageNotFoundComponent },
 
+
+]
 @NgModule({
     declarations: [
         AppComponent,
@@ -18,6 +37,7 @@ import { HttpClientModule } from '@angular/common/http';
         FooterComponent,
         DashboardComponent,
         LoginComponent,
+        ArticleComponent,
     ],
     imports: [
         BrowserModule,
@@ -26,13 +46,14 @@ import { HttpClientModule } from '@angular/common/http';
         MatToolbarModule,
         MatButtonModule,
         MatSidenavModule,
-        MatIconModule, HttpClientModule,MatMenuModule,
+        MatIconModule, HttpClientModule, MatMenuModule,
         MatListModule,
         MatCardModule,
         MatDialogModule,
         MatFormFieldModule,
         MatInputModule,
-        FormsModule
+        FormsModule,
+        RouterModule.forRoot(appRoutes, { enableTracing: true })
     ],
     entryComponents: [
         LoginComponent
