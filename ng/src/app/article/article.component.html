@@ -1,3 +1,17 @@
 <div class="spacer"></div>
-<div class="body">body</div>
+<div class="article">
+    <div class="article-header">
+        <span class="title" >{{article.title}}</span>
+        <div class="article-image"><img src="https://k1.midasplayer.com/images/logos/kingLogoRebrand.svg?_v=13wlhey"></div>
+        <span class="author">By {{article.author.name.firstname | uppercase}} at {{article.create_date}}</span>
+
+    </div>
+    <div class="article-body">
+        <p>
+            {{article.body}}
+        </p>
+    </div>
+</div>
+
+
 <div class="spacer"></div>

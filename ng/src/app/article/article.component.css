@@ -1,0 +1,41 @@
+:host{
+    display: flex;
+    flex-direction: row;
+}
+.article{    
+    /* flex-direction: column; */
+}
+.article-body{
+    max-width: 80rem;
+    align-self:flex-start;
+
+}
+.spacer{
+    flex-grow: 1;
+    flex-shrink: 0
+}
+
+.article-header{
+    display: flex;
+    /* align-items: center; */
+
+    flex-direction: column
+}
+.title {
+    font: normal normal 700 30px courier;
+    color: indigo;
+    /* max-width: 60rem; */
+    margin: 2.5rem;
+
+}
+.author{
+    font: normal normal 550 20px courier;
+    color: indigo;
+    margin-top: 1rem;
+    align-self:flex-start;
+}
+.article-image{
+    align-self: center;    
+    margin: 2rem;
+}
+.updated-date{}

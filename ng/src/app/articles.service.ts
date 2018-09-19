@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators'
 import { LoggerService } from './logger.service';
+import { log } from 'util';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Injectable({
@@ -10,8 +12,7 @@ import { LoggerService } from './logger.service';
 })
 export class ArticlesService {
 
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient, private route: ActivatedRoute) { }
   getAllArticles(): Observable<article[]> {
     //check if logged in
     const url = 'http://localhost:3000/articles'
@@ -22,12 +23,21 @@ export class ArticlesService {
       })
     };
 
-    return this.http.get<article[]>(url, httpOptions).pipe(tap(data=>console.log(data)))
+    return this.http.get<article[]>(url, httpOptions).pipe(tap(data => console.log(data)))
 
   }
-  // getArticleById(): Observable<article> {
-  //   return article
-  // }
+  getArticleById(id:string): Observable<article> {
+    const url = 'http://localhost:3000/articles/' + id
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      })
+    }
+
+    return this.http.get<article>(url, httpOptions)
+      .pipe(tap(data => console.log(data)));
+  }
 
 
 }
