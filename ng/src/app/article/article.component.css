@@ -23,14 +23,22 @@
 }
 .title {
     font: normal normal 700 30px courier;
-    color: indigo;
+    color: #09103e;
     /* max-width: 60rem; */
     margin: 2.5rem;
 
 }
+.article-body{
+    font-family: curiour;
+    font-weight: 400;
+    line-height: 1.7rem;
+    font-size: 18px;
+    color: rgb(3, 8, 39);
+
+}
 .author{
     font: normal normal 550 20px courier;
-    color: indigo;
+    color: #09103e;
     margin-top: 1rem;
     align-self:flex-start;
 }

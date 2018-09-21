@@ -18,23 +18,13 @@ import { UsersComponent } from './users/users.component';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { AboutComponent } from './about/about.component';
 const appRoutes: Routes = [
-<<<<<<< HEAD
     { path: "articles", component: DashboardComponent },
-=======
-    { path: "/articles", component: DashboardComponent },
->>>>>>> 091bc3119db40d8953c9659d488fae5ce462cbb5
     { path: "article/:id", component: ArticleComponent },
     { path: "article/create", component: CreateArticleComponent },
     { path: "users", component: UsersComponent },
     { path: "user/:id", component: UsersComponent },
-<<<<<<< HEAD
     { path: "about", component: AboutComponent },
     { path: "", redirectTo: '/articles',pathMatch:'full'},
-=======
-    { path: "user/create", component: CreateUserComponent },
-    { path: "/about", component: AboutComponent },
-    { path: "", redirectTo: '/articles' },
->>>>>>> 091bc3119db40d8953c9659d488fae5ce462cbb5
     { path: "**", component: PageNotFoundComponent },
 
 
@@ -47,15 +37,12 @@ const appRoutes: Routes = [
         DashboardComponent,
         LoginComponent,
         ArticleComponent,
-<<<<<<< HEAD
         CreateArticleComponent,
         DashboardComponent,
         UsersComponent,
         UsersComponent,
         AboutComponent,
         PageNotFoundComponent
-=======
->>>>>>> 091bc3119db40d8953c9659d488fae5ce462cbb5
     ],
     imports: [
         BrowserModule,

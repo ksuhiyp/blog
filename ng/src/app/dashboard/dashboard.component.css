@@ -25,3 +25,6 @@
     flex-grow: 1;flex-shrink: 0
 }
 
+.button-row button{
+    margin-left: 1rem
+}

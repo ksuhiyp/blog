@@ -7,6 +7,7 @@
         <button mat-button [matMenuTriggerFor]="menu" *ngIf="loggedInUser">{{loggedInUser}}</button>
         <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="logout()">Logout</button>
+            <button mat-menu-item (click)="postArticle()">Add New Article</button>
             <button mat-menu-item>About</button>
         </mat-menu>
     </a>
