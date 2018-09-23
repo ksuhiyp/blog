@@ -29,8 +29,7 @@ export class HeaderComponent implements OnInit {
       width: '250px',
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.loggedInUser = JSON.parse(localStorage.getItem('User'));
-      console.log(this.loggedInUser)
+      this.loggedInUser = localStorage.getItem('User');
     });
   }
 
@@ -41,6 +40,6 @@ export class HeaderComponent implements OnInit {
   logout() {
     this.loggedInUser = null;
     localStorage.clear();
-    
+
   }
 }

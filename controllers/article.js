@@ -156,8 +156,7 @@ exports.deleteArticles = async (req, res, next) => {
 
 }
 exports.deleteArticle = (req, res, next) => {
-    console.log(req.headers);
-    
+
     if (!req.params._id)
         next(createError(400, 'Missing Parameters'))
     if (!errorHandler.validateObjId(req.params._id))
@@ -170,14 +169,16 @@ exports.deleteArticle = (req, res, next) => {
         if (!article)
             return next(createError(400, 'article not found to be deleted!'));
 
-        article.article_images.body_images.forEach((element) => {
-            fs.unlink(element, (err) => {
+        if (article.article_images.body_images)
+            article.article_images.body_images.forEach((element) => {
+                fs.unlink(element, (err) => {
+                    return next(err);
+                })
+            });
+        if (rticle.article_images.main_image)
+            fs.unlink(article.article_images.main_image, (err) => {
                 return next(err);
-            })
-        });
-        fs.unlink(article.article_images.main_image, (err) => {
-            return next(err);
-        });
+            });
         res.status(200).json({ "operation": "deleteArticle", "deletedArticle": article._id })
 
     })

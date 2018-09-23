@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TemplateRef } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators'
 import { LoggerService } from './logger.service';
 import { log } from 'util';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog ,MatDialogConfig} from '@angular/material';
 
 
 @Injectable({
@@ -12,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ArticlesService {
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) { }
+  constructor(private http: HttpClient, private route: ActivatedRoute,public dialog: MatDialog) { }
 
   getAllArticles(): Observable<article[]> {
     //check if logged in

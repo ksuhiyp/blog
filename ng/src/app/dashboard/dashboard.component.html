@@ -2,11 +2,21 @@
 <div class="articles">
   <mat-card class="example-card" *ngFor="let article of articles">
 
+    <ng-template #deleteArticleRef>
+      <h3 mat-dialog-title>Delete Article</h3>
+      <mat-dialog-content>
+        <span>Are You Sure?</span>
+      </mat-dialog-content>
+      <mat-dialog-actions>
+        <button mat-button mat-dialog-close>No</button>
+        <button mat-raised-button color="warn" (click)="deleteArticle(article._id)">Yes</button>
+      </mat-dialog-actions>
+    </ng-template>
     <div class="button-row">
       <button mat-mini-fab color="primary" style="float: right;">
         <mat-icon aria-label="Example icon-button with a heart icon">edit</mat-icon>
       </button>
-      <button (click)="deleteArticle(article._id)" mat-mini-fab color="warn" style="float: right;" >
+      <button (click)="openDialog()" mat-mini-fab color="warn" style="float: right;" >
         <mat-icon aria-label="Example icon-button with a heart icon">delete</mat-icon>
       </button>
     </div>
