@@ -28,9 +28,10 @@ export class LoginComponent implements OnInit {
 
     this.auth.getToken(this.model)
       .subscribe((data) => {
+        // console.log(data.token)
         if (data.token != '') {
-          localStorage.setItem('token', JSON.stringify(data.token));
-          localStorage.setItem('User', JSON.stringify(data.user));
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('User', data.user);
           this.logged = true;
           this.dialogRef.close()
 

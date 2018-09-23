@@ -10,9 +10,9 @@ const morgan = require('morgan');
 const errorHandler = require('./helpers/errorHandler');
 const cors = require('cors')
 const app = express();
+app.use(morgan('tiny'));
 app.use(cors())
 app.use(compression())
-app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(passport.initialize());
@@ -21,4 +21,5 @@ app.use('/users', require('./routes/user'));
 app.use('/categories', require('./routes/category'));
 app.use('/tags', require('./routes/tag'));
 app.use(errorHandler.errorHandler);
+
 module.exports = app;

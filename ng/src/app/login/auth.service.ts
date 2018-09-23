@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators'
+import { catchError, tap} from 'rxjs/operators'
 import { LoggerService } from '../logger.service';
 
 
 export interface Token {
   token: string;
-  user:string
+  user: string
 }
 export interface User {
   email: string;
@@ -30,8 +30,8 @@ export class AuthService {
   getToken(User): Observable<Token> {
     return this.http.post<Token>(this.url, User, this.httpOptions)
       .pipe(
-        tap(data => console.log(data)),
-        catchError(this.handleError('getJWT', { token: '',user:'' }))
+        tap(data => console.log(data.token)),
+        catchError(this.handleError('getJWT', { token: '', user: '' }))
       )
 
   }

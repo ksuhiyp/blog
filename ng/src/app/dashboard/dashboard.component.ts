@@ -15,5 +15,7 @@ export class DashboardComponent implements OnInit {
     this.article.getAllArticles()
       .subscribe((articles) => this.articles = articles);
   }
-
+  deleteArticle(id: string) {    
+    this.article.deleteArticleById(id).subscribe()
+  }
 }

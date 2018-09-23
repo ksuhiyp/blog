@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http'
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators'
 import { LoggerService } from './logger.service';
@@ -13,30 +13,46 @@ import { ActivatedRoute } from '@angular/router';
 export class ArticlesService {
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
+
   getAllArticles(): Observable<article[]> {
     //check if logged in
+
+    
     const url = 'http://localhost:3000/articles'
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
+        'Authorization': 'Bearer '.concat(localStorage.getItem('token') )
       })
-    };
+    }
 
     return this.http.get<article[]>(url, httpOptions).pipe(tap(data => console.log(data)))
 
   }
-  getArticleById(id:string): Observable<article> {
+  getArticleById(id: string): Observable<article> {
+
     const url = 'http://localhost:3000/articles/' + id
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
+        'Authorization': 'Bearer '.concat(localStorage.getItem('token') )
       })
     }
 
     return this.http.get<article>(url, httpOptions)
       .pipe(tap(data => console.log(data)));
+  }
+  deleteArticleById(id: string):Observable<{}> {
+    const url = 'http://localhost:3000/articles/' + id
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '.concat(localStorage.getItem('token') )
+      })
+    }
+
+   return this.http.delete(url, httpOptions).pipe(tap(data => console.log(data)));
+
   }
 
 
