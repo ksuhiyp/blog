@@ -5,7 +5,6 @@ import { catchError, tap } from 'rxjs/operators'
 import { LoggerService } from './logger.service';
 import { log } from 'util';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog ,MatDialogConfig} from '@angular/material';
 
 
 @Injectable({
@@ -13,7 +12,7 @@ import { MatDialog ,MatDialogConfig} from '@angular/material';
 })
 export class ArticlesService {
 
-  constructor(private http: HttpClient, private route: ActivatedRoute,public dialog: MatDialog) { }
+  constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
   getAllArticles(): Observable<article[]> {
     //check if logged in
@@ -68,6 +67,7 @@ export interface categories {
   title: string;
 }
 export interface article {
+  _id:string;
   title: string;
   body: string;
   author: string;

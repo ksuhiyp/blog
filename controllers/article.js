@@ -175,7 +175,7 @@ exports.deleteArticle = (req, res, next) => {
                     return next(err);
                 })
             });
-        if (rticle.article_images.main_image)
+        if (article.article_images.main_image)
             fs.unlink(article.article_images.main_image, (err) => {
                 return next(err);
             });

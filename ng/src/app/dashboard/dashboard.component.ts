@@ -10,7 +10,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material';
 })
 export class DashboardComponent implements OnInit {
   articles: article[]
-  constructor(private article: ArticlesService,public dialog:MatDialog) { }
+  constructor(private article: ArticlesService, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.article.getAllArticles()
@@ -18,20 +18,21 @@ export class DashboardComponent implements OnInit {
   }
   deleteArticle(id: string) {
 
-    this.article.deleteArticleById(id).subscribe()
+    this.article.deleteArticleById(id).subscribe(_ => { this.dialog.closeAll(); this.articles = this.articles.filter(article => article._id != id) })
   }
   @ViewChild("deleteArticleRef") deleteArticleRef: TemplateRef<any>
 
-  openDialog(): void {
+  openDialog(): void {//for article delete
     const dialogConfig = new MatDialogConfig()
     dialogConfig.disableClose = true;
-      dialogConfig.autoFocus = true;
+    dialogConfig.autoFocus = true;
 
-      const dialogRef = this.dialog.open(this.deleteArticleRef, {
-        width: '250px',
-      });
-      dialogRef.afterClosed().subscribe(result => {
-      });
-    }
+    const dialogRef = this.dialog.open(this.deleteArticleRef, {
+      width: '250px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
 
 }
