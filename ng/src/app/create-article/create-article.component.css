@@ -1,0 +1,15 @@
+:host{
+    margin: 1rem;
+    display: flex;
+    flex-direction: row;
+}
+form > *:not(button):not(img) {
+    min-width: 100%;
+
+}
+form{   
+    flex-grow: 1}
+
+  .spacer{
+      flex-grow: 1
+  }

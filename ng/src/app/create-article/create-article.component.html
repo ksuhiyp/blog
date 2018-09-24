@@ -1,3 +1,14 @@
-<p>
-  create-article works!
-</p>
+<div class="spacer"></div>
+<form>
+  <mat-form-field>
+    <input matInput placeholder="Article Title" name="title">
+  </mat-form-field>
+  <button mat-stroked-button color="primary">Main Image</button>
+  <mat-form-field>
+    <input matInput placeholder="Article Description" name="description">
+  </mat-form-field>
+  <ckeditor [editor]="Editor" data="<p>Hello world!</p>"></ckeditor>
+  <app-tag-input></app-tag-input>
+  <app-img-input></app-img-input>
+</form>
+<div class="spacer"></div>

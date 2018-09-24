@@ -17,10 +17,15 @@ import { CreateArticleComponent } from './create-article/create-article.componen
 import { UsersComponent } from './users/users.component';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { AboutComponent } from './about/about.component';
+import {CKEditorModule} from '@ckeditor/ckeditor5-angular'
+import {MatChipsModule} from '@angular/material/chips';
+import { TagInputComponent } from './tag-input/tag-input.component';
+import { ImgInputComponent } from './img-input/img-input.component';
+
 const appRoutes: Routes = [
     { path: "articles", component: DashboardComponent },
-    { path: "article/:id", component: ArticleComponent },
     { path: "article/create", component: CreateArticleComponent },
+    { path: "article/:id", component: ArticleComponent },
     { path: "users", component: UsersComponent },
     { path: "user/:id", component: UsersComponent },
     { path: "about", component: AboutComponent },
@@ -42,7 +47,9 @@ const appRoutes: Routes = [
         UsersComponent,
         UsersComponent,
         AboutComponent,
-        PageNotFoundComponent
+        PageNotFoundComponent,
+        TagInputComponent,
+        ImgInputComponent
     ],
     imports: [
         BrowserModule,
@@ -58,6 +65,8 @@ const appRoutes: Routes = [
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
+        CKEditorModule,
+        MatChipsModule,
         RouterModule.forRoot(appRoutes, { enableTracing: true })
     ],
     entryComponents: [

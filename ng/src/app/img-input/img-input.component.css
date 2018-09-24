@@ -1,0 +1,19 @@
+:host{
+    display: flex;
+    flex-direction: column
+}
+img{
+max-width: 50%;
+align-self:center; 
+}
+.button-row{
+    /* max-width: 20%; */
+    align-self:center; 
+
+    display: flex;
+    max-width: 50%;
+
+    justify-content:center; 
+
+
+}
