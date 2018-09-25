@@ -8,6 +8,10 @@ import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 })
 export class CreateArticleComponent implements OnInit {
   public Editor = ClassicEditor
+  public formTitle;
+  public body = {
+    editorData: ''
+};
   constructor() { }
 
   ngOnInit() {

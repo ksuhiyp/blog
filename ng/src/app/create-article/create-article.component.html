@@ -1,14 +1,16 @@
 <div class="spacer"></div>
-<form>
+
+<form #articleForm="ngForm">
+    <app-img-input></app-img-input>
+
   <mat-form-field>
-    <input matInput placeholder="Article Title" name="title">
+    <input matInput placeholder="Article Title" name="title" [(ngModel)]="formTitle" required #title="ngModel">
+    <mat-error *ngIf="!title.valid">Article title is <strong>required</strong>!</mat-error>
   </mat-form-field>
-  <button mat-stroked-button color="primary">Main Image</button>
   <mat-form-field>
     <input matInput placeholder="Article Description" name="description">
   </mat-form-field>
-  <ckeditor [editor]="Editor" data="<p>Hello world!</p>"></ckeditor>
+  <ckeditor tagName="textarea" [(ngModel)]="body.editorData" name="body" [editor]="Editor"></ckeditor>
   <app-tag-input></app-tag-input>
-  <app-img-input></app-img-input>
 </form>
 <div class="spacer"></div>

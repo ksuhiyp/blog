@@ -1,6 +1,13 @@
+<button mat-stroked-button color="primary" >Main Image</button>
+
 <input type="file" name="main_image" hidden>
-<img src="https://dvynr1wh82531.cloudfront.net/sites/default/files/default_images/noImg_2.jpg">
-<div class="button-row">
-  <button mat-flat-button>Add an Image</button>
-  <button mat-flat-button color="warn" hidden>Delete</button>
+
+<div id="imgCtrl" >
+  <img src="https://dvynr1wh82531.cloudfront.net/sites/default/files/default_images/noImg_2.jpg">
+  <div class="button-row">
+    <button id="changeImage" mat-flat-button>Change</button>
+    <div class="spacer"></div>
+    <button id="deleteImage" mat-flat-button color="warn" hidden>Delete</button>
+  </div>
 </div>
+

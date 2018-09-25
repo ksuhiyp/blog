@@ -21,7 +21,11 @@ import {CKEditorModule} from '@ckeditor/ckeditor5-angular'
 import {MatChipsModule} from '@angular/material/chips';
 import { TagInputComponent } from './tag-input/tag-input.component';
 import { ImgInputComponent } from './img-input/img-input.component';
-
+import { MaterialFileInputModule, NGX_MAT_FILE_INPUT_CONFIG } from 'ngx-material-file-input';
+import { FileInputConfig } from 'ngx-material-file-input/lib/model/file-input-config.model';
+export const config: FileInputConfig = {
+    sizeUnit: 'Octet'
+  };
 const appRoutes: Routes = [
     { path: "articles", component: DashboardComponent },
     { path: "article/create", component: CreateArticleComponent },
@@ -67,13 +71,14 @@ const appRoutes: Routes = [
         FormsModule,
         CKEditorModule,
         MatChipsModule,
+        MaterialFileInputModule,
         RouterModule.forRoot(appRoutes, { enableTracing: true })
     ],
     entryComponents: [
         LoginComponent
     ],
 
-    providers: [],
+    providers: [{ provide: NGX_MAT_FILE_INPUT_CONFIG, useValue: config }],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
