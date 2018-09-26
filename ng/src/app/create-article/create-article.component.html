@@ -1,16 +1,32 @@
 <div class="spacer"></div>
 
-<form #articleForm="ngForm">
-    <app-img-input></app-img-input>
+<form (ngSubmit)="onSubmit(articleForm.form.value)" #articleForm="ngForm">
+  <mat-form-field>
+
+    <wa-mat-file-upload #fileUpload="waMatFileUpload" placeholder="Main Image" [preview]="false" name="main_image"
+    color="primary" [(ngModel)]="mainImage"  #articlMainImage="ngModel">Add Main
+      Image</wa-mat-file-upload>
+  </mat-form-field>
 
   <mat-form-field>
     <input matInput placeholder="Article Title" name="title" [(ngModel)]="formTitle" required #title="ngModel">
     <mat-error *ngIf="!title.valid">Article title is <strong>required</strong>!</mat-error>
   </mat-form-field>
   <mat-form-field>
-    <input matInput placeholder="Article Description" name="description">
+    <input matInput placeholder="Article Description" name="description" [(ngModel)]="description"  #articleDescription="ngModel">
   </mat-form-field>
+
   <ckeditor tagName="textarea" [(ngModel)]="body.editorData" name="body" [editor]="Editor"></ckeditor>
-  <app-tag-input></app-tag-input>
+  <mat-form-field class="tag-list">
+    <mat-chip-list #chipList>
+      <mat-chip *ngFor="let tag of _tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag)">
+        {{tag.name}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input placeholder="New tag..." [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" >
+        <input type="text" name="tags[]" [(ngModel)]="articleTags"  #tags="ngModel" hidden>
+    </mat-chip-list>
+  </mat-form-field>  <button id="submit" type="submit" mat-raised-button color='primary'>Submit</button>
 </form>
 <div class="spacer"></div>

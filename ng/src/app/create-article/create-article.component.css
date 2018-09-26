@@ -7,9 +7,15 @@ form > *:not(button):not(img) {
     min-width: 100%;
 
 }
-form{   
-    flex-grow: 1}
+form{ 
+    display: flex;
+    flex-direction: column;  
+    flex-grow: 1
+}
 
   .spacer{
       flex-grow: 1
   }
+#submit{
+    align-self: center;
+}

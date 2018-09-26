@@ -17,15 +17,19 @@ import { CreateArticleComponent } from './create-article/create-article.componen
 import { UsersComponent } from './users/users.component';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { AboutComponent } from './about/about.component';
-import {CKEditorModule} from '@ckeditor/ckeditor5-angular'
-import {MatChipsModule} from '@angular/material/chips';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular'
+import { MatChipsModule } from '@angular/material/chips';
 import { TagInputComponent } from './tag-input/tag-input.component';
 import { ImgInputComponent } from './img-input/img-input.component';
 import { MaterialFileInputModule, NGX_MAT_FILE_INPUT_CONFIG } from 'ngx-material-file-input';
 import { FileInputConfig } from 'ngx-material-file-input/lib/model/file-input-config.model';
+import { ReactiveFormsModule } from '@angular/forms';
+import {MatFileUploadModule} from '@webacad/ng-mat-file-upload';
+
+
 export const config: FileInputConfig = {
     sizeUnit: 'Octet'
-  };
+};
 const appRoutes: Routes = [
     { path: "articles", component: DashboardComponent },
     { path: "article/create", component: CreateArticleComponent },
@@ -33,7 +37,7 @@ const appRoutes: Routes = [
     { path: "users", component: UsersComponent },
     { path: "user/:id", component: UsersComponent },
     { path: "about", component: AboutComponent },
-    { path: "", redirectTo: '/articles',pathMatch:'full'},
+    { path: "", redirectTo: '/articles', pathMatch: 'full' },
     { path: "**", component: PageNotFoundComponent },
 
 
@@ -68,11 +72,12 @@ const appRoutes: Routes = [
         MatDialogModule,
         MatFormFieldModule,
         MatInputModule,
-        FormsModule,
+        FormsModule, ReactiveFormsModule,MatFileUploadModule,
         CKEditorModule,
         MatChipsModule,
         MaterialFileInputModule,
-        RouterModule.forRoot(appRoutes, { enableTracing: true })
+        RouterModule.forRoot(appRoutes, { enableTracing: true }),
+
     ],
     entryComponents: [
         LoginComponent
@@ -81,4 +86,6 @@ const appRoutes: Routes = [
     providers: [{ provide: NGX_MAT_FILE_INPUT_CONFIG, useValue: config }],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+}
