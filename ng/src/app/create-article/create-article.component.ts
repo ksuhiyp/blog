@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { FormGroup, FormControl } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { ChangeEvent } from '@ckeditor/ckeditor5-angular/ckeditor.component';
+import { TagService } from '../tag.service';
+import { Observable, Subject } from 'rxjs'
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 export interface Tag {
   name: string;
 }
@@ -15,7 +18,9 @@ export class CreateArticleComponent implements OnInit {
   public Editor = ClassicEditor
   public formTitle;
   public mainImage;
-  public articleTags=[];
+  public remoteTags$: Observable<Tag[]>;
+  private searchTerms = new Subject<string>();
+  public articleTags = [];
   private _tags: Tag[] = [];
   description;
   public body = {
@@ -27,17 +32,32 @@ export class CreateArticleComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor() { }
+  constructor(private tagService: TagService) { }
 
   ngOnInit() {
+    this.remoteTags$ = this.searchTerms.pipe(debounceTime(300), distinctUntilChanged(), switchMap((term: string) => this.tagService.searchTerm(term))
 
 
+    )
   }
 
+
+  search(term: string) {
+    console.log(term);
+    
+    this.searchTerms.next(term)
+  }
+  editorIsValid() { }
+
+  public onBlur({ editor }: ChangeEvent) {
+    const data = editor
+
+    console.log(data);
+  }
   onSubmit(data) {
     console.log(data);
 
-    
+
   }
 
   add(event: MatChipInputEvent): void {
@@ -56,7 +76,7 @@ export class CreateArticleComponent implements OnInit {
 
     // Reset the input value
     if (input) {
-      // input.value = '';
+      input.value = '';
       this.articleTags.push(value.trim());
 
     }
@@ -67,6 +87,7 @@ export class CreateArticleComponent implements OnInit {
 
     if (index >= 0) {
       this._tags.splice(index, 1);
+      this.articleTags.splice(this.articleTags.indexOf(tag), 1);
     }
   }
 

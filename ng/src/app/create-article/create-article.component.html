@@ -4,7 +4,7 @@
   <mat-form-field>
 
     <wa-mat-file-upload #fileUpload="waMatFileUpload" placeholder="Main Image" [preview]="false" name="main_image"
-    color="primary" [(ngModel)]="mainImage"  #articlMainImage="ngModel">Add Main
+      color="primary" [(ngModel)]="mainImage" #articlMainImage="ngModel">Add Main
       Image</wa-mat-file-upload>
   </mat-form-field>
 
@@ -13,10 +13,10 @@
     <mat-error *ngIf="!title.valid">Article title is <strong>required</strong>!</mat-error>
   </mat-form-field>
   <mat-form-field>
-    <input matInput placeholder="Article Description" name="description" [(ngModel)]="description"  #articleDescription="ngModel">
+    <input matInput placeholder="Article Description" name="description" [(ngModel)]="description" #articleDescription="ngModel">
   </mat-form-field>
 
-  <ckeditor tagName="textarea" [(ngModel)]="body.editorData" name="body" [editor]="Editor"></ckeditor>
+  <ckeditor tagName="textarea" [(ngModel)]="body.editorData" name="body" [editor]="Editor" (blur)=(onBlur($event))></ckeditor>
   <mat-form-field class="tag-list">
     <mat-chip-list #chipList>
       <mat-chip *ngFor="let tag of _tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag)">
@@ -24,9 +24,16 @@
         <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
       </mat-chip>
       <input placeholder="New tag..." [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" >
-        <input type="text" name="tags[]" [(ngModel)]="articleTags"  #tags="ngModel" hidden>
+        [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" (keyup)="search(tagInput.value)"
+        #tagInput>
+      <mat-selection-list #tags>
+        <mat-list-option *ngFor="let tag of remoteTags$ | async">
+          {{tag.title}}
+        </mat-list-option>
+      </mat-selection-list>
+
+      <input type="text" name="tags[]" [(ngModel)]="articleTags" #tags="ngModel" hidden>
     </mat-chip-list>
-  </mat-form-field>  <button id="submit" type="submit" mat-raised-button color='primary'>Submit</button>
+  </mat-form-field> <button id="submit" type="submit" mat-raised-button color='primary' [disabled]="!articleForm.valid">Submit</button>
 </form>
 <div class="spacer"></div>

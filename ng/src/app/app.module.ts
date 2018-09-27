@@ -19,8 +19,6 @@ import { CreateUserComponent } from './create-user/create-user.component';
 import { AboutComponent } from './about/about.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular'
 import { MatChipsModule } from '@angular/material/chips';
-import { TagInputComponent } from './tag-input/tag-input.component';
-import { ImgInputComponent } from './img-input/img-input.component';
 import { MaterialFileInputModule, NGX_MAT_FILE_INPUT_CONFIG } from 'ngx-material-file-input';
 import { FileInputConfig } from 'ngx-material-file-input/lib/model/file-input-config.model';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -56,8 +54,7 @@ const appRoutes: Routes = [
         UsersComponent,
         AboutComponent,
         PageNotFoundComponent,
-        TagInputComponent,
-        ImgInputComponent
+
     ],
     imports: [
         BrowserModule,
