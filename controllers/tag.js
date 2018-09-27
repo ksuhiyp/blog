@@ -14,7 +14,7 @@ exports.getTagById = (req, res, next) => {
         then((tag) => {
             if (!tag)
                 return next(createError(400, `No, there is no tag with id of ${req.params._id}`));
-                
+
             res.status(201).json({ "Operation": 'GET/tag', "result": tag })
         }).catch(err => next(err));
 
@@ -22,8 +22,10 @@ exports.getTagById = (req, res, next) => {
 
 
 exports.getAllTags = (req, res, next) => {
+
+    let options = {title:{$regex:req.query.title}}
     tagModel.
-        find().
+        find(options).
         select('-__v ').
         exec().
         then((tags) => {

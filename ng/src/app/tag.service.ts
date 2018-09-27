@@ -16,8 +16,8 @@ export class TagService {
 
     if (!term.trim())
       return of([]);
-
-    const url = 'http://localhost:3000/tags'
+    const query = '?title='
+    const url = 'http://localhost:3000/tags'+query+term
     return this.http.get<Tag[]>(url).pipe(map(z => z.Result)
   }
 }
