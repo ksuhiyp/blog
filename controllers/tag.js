@@ -23,10 +23,11 @@ exports.getTagById = (req, res, next) => {
 
 exports.getAllTags = (req, res, next) => {
 
-    let options = {title:{$regex:req.query.title}}
+    let options = { title: { $regex: req.query.title } }
     tagModel.
         find(options).
         select('-__v ').
+        select('-_id ').
         exec().
         then((tags) => {
             if (!tags)
@@ -89,4 +90,17 @@ exports.updateTag = (req, res, next) => {
             }).catch((err) => next(err));
         }).catch((err) => next(createError(500, err)));
 
+}
+
+exports.upsertTag = (req, res, next) => {
+    tagModel.findOneAndUpdate(req.body, req.body, { upsert: true ,new:true}).
+    select('-_id').
+        exec().
+        then((tags) => {
+            if (!tags)
+                res.status(204);
+
+            res.status(201).json({ "Operation": 'UPSERT/tags', tags });
+
+        }).catch((err) => next(err));
 }

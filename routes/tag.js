@@ -10,6 +10,7 @@ router
     .all('*', passport.authenticate('jwt', { session: false }), (req, res, next) => { next(); })
     .post('/', tagController.createTag)
     .delete('/:_id', tagController.deleteTag)
-    .put('/:_id', tagController.updateTag);
+    .put('/', tagController.upsertTag)
+    .put('/:_id', tagController.updateTag)
 
 module.exports = router;

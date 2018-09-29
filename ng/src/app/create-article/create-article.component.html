@@ -20,20 +20,23 @@
   <mat-form-field class="tag-list">
     <mat-chip-list #chipList>
       <mat-chip *ngFor="let tag of _tags" [selectable]="selectable" [removable]="removable" (removed)="remove(tag)">
-        {{tag.name}}
+        {{tag.title}}
         <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
       </mat-chip>
+      <mat-error *ngIf="duplicatedTag">Tag title is <strong>Duplicated</strong>!</mat-error>
+
       <input placeholder="New tag..." [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)" (keyup)="search(tagInput.value)"
         #tagInput>
-      <mat-selection-list #tags>
-        <mat-list-option *ngFor="let tag of remoteTags$ | async">
-          {{tag.title}}
-        </mat-list-option>
-      </mat-selection-list>
+      
 
       <input type="text" name="tags[]" [(ngModel)]="articleTags" #tags="ngModel" hidden>
     </mat-chip-list>
+    <mat-selection-list #selectedTags>
+      <mat-list-option *ngFor="let tag of remoteTags$ | async" #selectedTag value="{{tag.title}}" (click)="selectTag(selectedTag)">
+        {{tag.title}}
+      </mat-list-option>
+    </mat-selection-list>
   </mat-form-field> <button id="submit" type="submit" mat-raised-button color='primary' [disabled]="!articleForm.valid">Submit</button>
 </form>
 <div class="spacer"></div>
