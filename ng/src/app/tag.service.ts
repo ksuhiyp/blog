@@ -17,7 +17,19 @@ export class TagService {
     if (!term.trim())
       return of([]);
     const query = '?title='
-    const url = 'http://localhost:3000/tags'+query+term
-    return this.http.get<Tag[]>(url).pipe(map(z => z.Result)
+    const url = 'http://localhost:3000/tags' + query + term
+
+    return this.http.get<{ Result: Tag[] }>(url).pipe(map(data => data.Result))
+  }
+
+  upsertTerm(tag: Tag): Observable<Tag> {
+    const url = 'http://localhost:3000/tags'
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '.concat(localStorage.getItem('token'))
+      })
+    }
+    return this.http.put<{ tag: Tag }>(url, tag, options).pipe(map(data => data.tag))
   }
 }

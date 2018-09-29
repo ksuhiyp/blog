@@ -6,8 +6,10 @@ import { ChangeEvent } from '@ckeditor/ckeditor5-angular/ckeditor.component';
 import { TagService } from '../tag.service';
 import { Observable, Subject } from 'rxjs'
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { log } from 'util';
 export interface Tag {
-  name: string;
+  _id?: string,
+  title: string;
 }
 @Component({
   selector: 'app-create-article',
@@ -20,9 +22,12 @@ export class CreateArticleComponent implements OnInit {
   public mainImage;
   public remoteTags$: Observable<Tag[]>;
   private searchTerms = new Subject<string>();
-  public articleTags = [];
+  private upsertTerm = new Subject<Tag>();
+  public articleTags: Tag[];
   private _tags: Tag[] = [];
   description;
+  duplicatedTag = false;
+  upsertedTag: Tag;
   public body = {
     editorData: ''
   };
@@ -35,19 +40,17 @@ export class CreateArticleComponent implements OnInit {
   constructor(private tagService: TagService) { }
 
   ngOnInit() {
-    this.remoteTags$ = this.searchTerms.pipe(debounceTime(300), distinctUntilChanged(), switchMap((term: string) => this.tagService.searchTerm(term))
-
-
-    )
+    this.remoteTags$ = this.searchTerms.pipe(debounceTime(1000), distinctUntilChanged(), switchMap((term: string) => this.tagService.searchTerm(term)));
   }
 
 
   search(term: string) {
-    console.log(term);
-    
+
     this.searchTerms.next(term)
   }
-  editorIsValid() { }
+  selectTag(data) {
+    this.add({ input: data, value: data.value })
+  }
 
   public onBlur({ editor }: ChangeEvent) {
     const data = editor
@@ -61,24 +64,35 @@ export class CreateArticleComponent implements OnInit {
   }
 
   add(event: MatChipInputEvent): void {
+    this.duplicatedTag = false;
+    console.log('data');
+
     const input = event.input;
     const value = event.value;
-
-    //Check for duplicated values
     for (let tag of this._tags) {
-      if (tag.name == value)
+      if (tag.title == value) {
+        this.duplicatedTag = true;
         return
-    }
-    // Add our fruit
-    if ((value || '').trim()) {
-      this._tags.push({ name: value.trim() });
-    }
+      }
+      this.tagService.upsertTerm({ title: value }).subscribe((data) => {
+        console.log(data);
+        
+        this.upsertedTag = data
+        // Add our fruit
+        if ((value || '').trim()) {
+          this._tags.push({ title: value.trim() });
+        }
+          console.log('test');
+          
+        // Reset the input value
+        if (input) {
+          input.value = '';
+          this.articleTags.push({ title: input.value, _id: this.upsertedTag._id });
 
-    // Reset the input value
-    if (input) {
-      input.value = '';
-      this.articleTags.push(value.trim());
-
+        }
+      });
+      //TODO: if unothorized or error occured breake the whole process 
+      //Check for duplicated values
     }
   }
 
